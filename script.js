@@ -342,7 +342,6 @@ changePicBtn.addEventListener('click', () => {
     profileUpload.click();
 });
 
-// Lógica de Upload
 profileUpload.addEventListener('change', function() {
     const file = this.files[0];
     if (file) {
@@ -357,13 +356,16 @@ profileUpload.addEventListener('change', function() {
     }
 });
 
-// Lógica de Remover Foto
 removePicBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     profilePicDisplay.src = defaultAvatar;
     localStorage.removeItem('user_profile_image');
     profileUpload.value = "";
     removePicBtn.style.display = "none";
+});
+
+document.getElementById('close-player-btn').addEventListener('click', () => {
+    document.getElementById('player-bar').classList.add('player-bar-hidden');
 });
 
 loadProfileImage();

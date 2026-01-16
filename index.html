@@ -199,24 +199,26 @@
             </section>
 
             <section class="content" id="profile-page" style="display: none;">
-    <div style="text-align: center; padding: 40px; background: linear-gradient(to bottom, #282828, #121212); border-radius: 12px;">
-        
-        <input type="file" id="profile-upload" accept="image/*" style="display: none;">
-        
-        <div class="profile-pic-wrapper">
-            <img id="profile-pic-display" src="https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150">
-            
-            <div class="profile-pic-overlay">
-                <span id="change-pic-btn"><i class="fa-solid fa-camera"></i> Alterar</span>
-                <span id="remove-pic-btn" style="color: #ff4d4d; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-trash"></i> Remover</span>
-            </div>
-        </div>
+                <div style="text-align: center; padding: 40px; background: linear-gradient(to bottom, #282828, #121212); border-radius: 12px;">
+                    
+                    <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+                    
+                    <div class="profile-pic-wrapper">
+                        <img id="profile-pic-display" src="https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150">
+                        
+                        <div class="profile-pic-overlay">
+                            <span id="change-pic-btn"><i class="fa-solid fa-camera"></i> Alterar</span>
+                            <span id="remove-pic-btn" style="color: #ff4d4d; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-trash"></i> Remover</span>
+                        </div>
+                    </div>
 
-        <h1 id="profile-page-title" style="margin-top: 20px;">Seu Perfil</h1>
-        <p id="profile-stats" style="color: #b3b3b3;">0 Playlists • 0 Seguidores</p>
-        <button class="nav-playlist-btn-save" id="back-home-profile" style="margin-top: 20px;">Voltar</button>
+                    <h1 id="profile-page-title" style="margin-top: 20px;">Seu Perfil</h1>
+                    <p id="profile-stats" style="color: #b3b3b3;">0 Playlists • 0 Seguidores</p>
+                    <button class="nav-playlist-btn-save" id="back-home-profile" style="margin-top: 20px;">Voltar</button>
+                </div>
+            </section>
+        </main>
     </div>
-</section>
 
     <script src="script.js"></script>
     <script src="./javascript/weather.js"></script>
@@ -237,7 +239,10 @@
     </script>
 
     <div id="player-bar" class="player-bar-hidden">
-        <i class="fa-solid fa-angle-down" id="minimize-btn"></i>
+        <div style="position: absolute; top: 10px; right: 20px; display: flex; gap: 15px;">
+            <i class="fa-solid fa-angle-down" id="minimize-btn" style="cursor: pointer;"></i>
+            <i class="fa-solid fa-xmark" id="close-player-btn" style="cursor: pointer; font-size: 20px; color: #b3b3b3;"></i>
+        </div>
         
         <div class="player-content-info">
             <img id="player-img" src="" alt="Capa">
@@ -265,6 +270,14 @@
             <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
         </div>
     </div>
+
+    <script>
+        document.getElementById('close-player-btn').addEventListener('click', () => {
+            document.getElementById('player-bar').classList.add('player-bar-hidden');
+            const audio = document.querySelector('audio');
+            if(audio) audio.pause();
+        });
+    </script>
 </body>
 
 </html>

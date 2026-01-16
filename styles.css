@@ -16,7 +16,7 @@ body {
 
 .container {
     display: flex;
-    height: 103vh;
+    height: 120vh;
 }
 
 .sidebar {
@@ -134,6 +134,7 @@ body {
     color: #b3b3b3;
     cursor: pointer;
     transition: all 0.2s ease;
+    z-index: 101;
 }
 
 
@@ -230,6 +231,7 @@ main {
     overflow-y: auto;
     position: relative;
     z-index: 10;
+    padding-bottom: 120px;
 }
 
 .top-nav {
@@ -308,7 +310,7 @@ main {
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.2s ease;
-    z-index: 9999;
+    z-index: 5000;
     pointer-events: none;
 }
 
@@ -402,17 +404,17 @@ main {
 #player-bar {
     position: fixed;
     bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 95%;
+    left: calc(300px + 20px); 
+    right: 20px;
+    width: auto; 
     max-width: 1400px;
     height: 100px;
     display: grid;
     grid-template-columns: 1fr 2fr 1fr;
     align-items: center;
     padding: 0 30px;
-    z-index: 1000;
-    background: rgba(18, 18, 18, 0.7);
+    z-index: 9999;
+    background: rgba(18, 18, 18, 0.85);
     backdrop-filter: blur(25px) saturate(200%);
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 24px;
@@ -422,7 +424,7 @@ main {
 }
 
 .player-bar-hidden {
-    transform: translate(-50%, 200px) !important;
+    transform: translateY(200px) !important;
     opacity: 0;
     pointer-events: none;
 }
@@ -440,22 +442,41 @@ main {
 
 #minimize-btn {
     position: absolute;
-    top: 10px;
+    top: 1px;
     right: 25px;
     cursor: pointer;
     font-size: 20px;
-    color: #b3b3b3;
+    color: #ffffff;
     transition: all 0.3s ease;
     z-index: 1100;
 }
 
 #minimize-btn:hover {
-    color: #1db954;
+  color: #1db954 !important;
+    transform: scale(1.2);  
+}
+
+#close-player-btn {
+    position: absolute;
+    top: 1px;
+    right: -2px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #ffffff !important;
+    transition: all 0.3s ease;
+    z-index: 1100;
+}
+
+#close-player-btn:hover {
+    color: #ff4444 !important;
     transform: scale(1.2);
 }
 
+
 .player-bar-minimized {
-    transform: translate(-50%, 80px) !important;
+    transform: translateY(80px) !important;
+    color: #1db954 !important;
+    transform: scale(1.2);
 }
 
 .player-bar-minimized #minimize-btn {
