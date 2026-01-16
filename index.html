@@ -41,7 +41,6 @@
                 <p>É fácil, vamos te ajudar.</p>
                 <button>Criar Playlist</button>
             </div>
-
             <div id="wf-main-container">
                 <form id="wf-search-form">
                     <i class="fa-solid fa-location-dot"></i>
@@ -107,7 +106,7 @@
         <main>
             <div class="top-nav">
                 <div class="nav-controls">
-                    <a href="#" class="icon-btn active home-link">
+                    <a href="#" class="icon-btn active home-link" id="home-nav-btn">
                         <span class="material-symbols-outlined">home</span>
                         <span class="tooltip-text">Início</span>
                     </a>
@@ -123,7 +122,7 @@
                         <i class="fa-regular fa-bell"></i>
                         <span class="tooltip-text">Novidades</span>
                     </div>
-                    <div class="icon-btn config">
+                    <div class="icon-btn config" id="config-nav-btn">
                         <i class="fa-solid fa-gear"></i>
                         <span class="tooltip-text">Configurações</span>
                     </div>
@@ -134,11 +133,53 @@
                 </div>
             </div>
 
-            <section class="content">
+            <section class="content" id="main-content">
                 <h2>Artistas Populares</h2>
                 <div class="artists-grid"></div>
                 <h2>Álbuns Populares</h2>
                 <div class="albums-grid"></div>
+            </section>
+
+            <section class="content" id="settings-page" style="display: none;">
+                <h2>Configurações</h2>
+                <div class="settings-container">
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Horário</h3>
+                            <p>Escolha sua preferência de formato: 12 horas ou 24 horas.</p>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="time-format-switch" checked>
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Qualidade do Áudio</h3>
+                            <p>Ajuste a fidelidade sonora das faixas.</p>
+                        </div>
+                        <select class="settings-select">
+                            <option>Automática</option>
+                            <option>Baixa</option>
+                            <option>Normal</option>
+                            <option selected>Alta (Recomendado)</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <div class="setting-info">
+                            <h3>Idioma</h3>
+                            <p>Escolha o idioma da interface.</p>
+                        </div>
+                        <select class="settings-select" id="language-select">
+                            <option value="pt-BR" selected>Português do Brasil</option>
+                            <option value="en-US">English (US)</option>
+                            <option value="es-ES">Español</option>
+                        </select>
+                    </div>
+                    <button class="nav-playlist-btn-save" id="back-home-btn">Salvar e Voltar</button>
+                </div>
             </section>
         </main>
     </div>
@@ -146,27 +187,15 @@
     <script src="script.js"></script>
     <script src="./javascript/weather.js"></script>
     <script>
-        function updateBrasiliaTime() {
-            const clockElement = document.getElementById('brasilia-clock');
-            if (clockElement) {
-                const options = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'America/Sao_Paulo' };
-                clockElement.textContent = new Intl.DateTimeFormat('pt-BR', options).format(new Date());
-            }
+        const volumeSlider = document.getElementById('volume-slider');
+
+        function updateVolumeBackground() {
+            const value = (volumeSlider.value - volumeSlider.min) / (volumeSlider.max - volumeSlider.min) * 100;
+            volumeSlider.style.background = `linear-gradient(to right, #1db954 ${value}%, rgba(255, 255, 255, 0.1) ${value}%)`;
         }
-        setInterval(updateBrasiliaTime, 1000);
-        updateBrasiliaTime();
 
-
-const volumeSlider = document.getElementById('volume-slider');
-
-function updateVolumeBackground() {
-    const value = (volumeSlider.value - volumeSlider.min) / (volumeSlider.max - volumeSlider.min) * 100;
-    volumeSlider.style.background = `linear-gradient(to right, #1db954 ${value}%, rgba(255, 255, 255, 0.1) ${value}%)`;
-}
-
-volumeSlider.addEventListener('input', updateVolumeBackground);
-updateVolumeBackground();
-
+        volumeSlider.addEventListener('input', updateVolumeBackground);
+        updateVolumeBackground();
     </script>
 
     <div id="player-bar" class="player-bar-hidden">
