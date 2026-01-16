@@ -33,6 +33,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentTimeEl = document.getElementById('current-time');
     const totalDurationEl = document.getElementById('total-duration');
     const minimizeBtn = document.getElementById('minimize-btn');
+    const mainSection = document.getElementById('main-content');
+    const settingsSection = document.getElementById('settings-page');
+    const notifPage = document.getElementById('notifications-page');
+    const profilePage = document.getElementById('profile-page');
+    const timeSwitch = document.getElementById('time-format-switch');
+    const languageSelect = document.getElementById('language-select');
 
     playerBar.classList.add('player-bar-hidden');
 
@@ -158,72 +164,45 @@ document.addEventListener("DOMContentLoaded", () => {
 
     updateVolumeUI(volumeSlider.value);
 
-    const btnConfig = document.getElementById('config-nav-btn');
-    const btnHome = document.getElementById('home-nav-btn');
-    const btnBackHome = document.getElementById('back-home-btn');
-    const mainSection = document.getElementById('main-content');
-    const settingsSection = document.getElementById('settings-page');
-    const timeSwitch = document.getElementById('time-format-switch');
-    const languageSelect = document.querySelectorAll('.settings-select')[1];
-
-    function togglePage(showSettings) {
-        if(showSettings) {
-            mainSection.style.display = 'none';
-            settingsSection.style.display = 'block';
-        } else {
-            mainSection.style.display = 'block';
-            settingsSection.style.display = 'none';
-        }
-    }
-
-    btnConfig.addEventListener('click', () => togglePage(true));
-    btnHome.addEventListener('click', (e) => {
-        e.preventDefault();
-        togglePage(false);
-    });
-
-    function updateClock() {
-        const clockElement = document.getElementById('brasilia-clock');
-        if (clockElement) {
-            const is24h = timeSwitch.checked;
-            const options = { 
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: !is24h, 
-                timeZone: 'America/Sao_Paulo' 
-            };
-            clockElement.textContent = new Intl.DateTimeFormat('pt-BR', options).format(new Date());
-        }
-    }
-    setInterval(updateClock, 1000);
-
     const translations = {
         "pt-BR": {
             home: "Início", library: "Sua Biblioteca", createPl: "Criar playlist ou pasta",
             artists: "Artistas Populares", albums: "Álbuns Populares", notif: "Novidades",
-            settings: "Configurações", profile: "Perfil", save: "Salvar e Voltar",
+            settings: "Configurações", profile: "Perfil", save: "Salvar e Voltar", back: "Voltar",
             search: "O que você quer ouvir?", weatherSearch: "Buscar cidade",
             humidity: "Umidade", wind: "Vento", max: "Temp. Máx", min: "Temp. Mín",
             tempUnit: "Graus Celsius", plTitle: "Crie sua Primeira Playlist",
-            plSub: "É fácil, vamos te ajudar.", plBtn: "Criar Playlist"
+            plSub: "É fácil, vamos te ajudar.", plBtn: "Criar Playlist",
+            langTitle: "Idioma", timeTitle: "Horário", timeSub: "Escolha sua preferência de formato: 12 horas ou 24 horas.",
+            audioTitle: "Qualidade do Áudio", audioSub: "Ajuste a fidelidade sonora das faixas.",
+            audioOpt: ["Automática", "Baixa", "Normal", "Alta (Recomendado)"],
+            profileStats: "0 Playlists • 0 Seguidores"
         },
         "en-US": {
             home: "Home", library: "Your Library", createPl: "Create playlist or folder",
             artists: "Popular Artists", albums: "Popular Albums", notif: "What's New",
-            settings: "Settings", profile: "Profile", save: "Save and Back",
+            settings: "Settings", profile: "Profile", save: "Save and Back", back: "Back",
             search: "What do you want to listen to?", weatherSearch: "Search city",
             humidity: "Humidity", wind: "Wind", max: "Max Temp", min: "Min Temp",
             tempUnit: "Degrees Fahrenheit", plTitle: "Create your first playlist",
-            plSub: "It's easy, we'll help you.", plBtn: "Create Playlist"
+            plSub: "It's easy, we'll help you.", plBtn: "Create Playlist",
+            langTitle: "Language", timeTitle: "Time Format", timeSub: "Choose your preference: 12-hour or 24-hour.",
+            audioTitle: "Audio Quality", audioSub: "Adjust the sound fidelity of the tracks.",
+            audioOpt: ["Automatic", "Low", "Normal", "High (Recommended)"],
+            profileStats: "0 Playlists • 0 Followers"
         },
         "es-ES": {
             home: "Inicio", library: "Tu Biblioteca", createPl: "Crear lista o carpeta",
             artists: "Artistas Populares", albums: "Álbumes Populares", notif: "Novedades",
-            settings: "Configuraciones", profile: "Perfil", save: "Guardar y Volver",
+            settings: "Configuraciones", profile: "Perfil", save: "Guardar y Volver", back: "Volver",
             search: "¿Qué quieres escuchar?", weatherSearch: "Buscar ciudad",
-            humidity: "Humedad", wind: "Viento", max: "Temp. Máx", min: "Temp. Mín",
+            humidity: "Humedad", wind: "Vento", max: "Temp. Máx", min: "Temp. Mín",
             tempUnit: "Grados Celsius", plTitle: "Crea tu primera lista",
-            plSub: "Es fácil, te ayudaremos.", plBtn: "Crear lista"
+            plSub: "Es fácil, te ayudaremos.", plBtn: "Crear lista",
+            langTitle: "Idioma", timeTitle: "Formato de hora", timeSub: "Elige tu preferencia: 12 horas o 24 horas.",
+            audioTitle: "Calidad de audio", audioSub: "Ajusta la fidelidad de sonido de las pistas.",
+            audioOpt: ["Automática", "Baja", "Normal", "Alta (Recomendado)"],
+            profileStats: "0 Listas • 0 Seguidores"
         }
     };
 
@@ -231,11 +210,23 @@ document.addEventListener("DOMContentLoaded", () => {
         const t = translations[lang];
         if (!t) return;
 
-        const homeTooltip = document.querySelector('.home-link .tooltip-text');
-        if(homeTooltip) homeTooltip.innerText = t.home;
-        
+        document.querySelectorAll('.home-link .tooltip-text').forEach(el => el.innerText = t.home);
         document.querySelector('.nav-library p').innerText = t.library;
         document.querySelector('.plus-btn .tooltip-text').innerText = t.createPl;
+        document.querySelector('.search-bar input').placeholder = t.search;
+
+        const notifIcon = document.getElementById('notif-nav-btn');
+        if(notifIcon) notifIcon.querySelector('.tooltip-text').innerText = t.notif;
+        const configIcon = document.getElementById('config-nav-btn');
+        if(configIcon) configIcon.querySelector('.tooltip-text').innerText = t.settings;
+        const profileIcon = document.getElementById('profile-nav-btn');
+        if(profileIcon) profileIcon.querySelector('.tooltip-text').innerText = t.profile;
+
+        const h2Main = document.querySelectorAll('#main-content h2');
+        if (h2Main.length >= 2) {
+            h2Main[0].innerText = t.artists;
+            h2Main[1].innerText = t.albums;
+        }
 
         const plBox = document.querySelector('.nav-playlist');
         if (plBox) {
@@ -244,47 +235,72 @@ document.addEventListener("DOMContentLoaded", () => {
             plBox.querySelector('button').innerText = t.plBtn;
         }
 
-        document.querySelector('.search-bar input').placeholder = t.search;
-        
-        const bellIcon = document.querySelector('.fa-bell');
-        if(bellIcon) bellIcon.closest('a, div').querySelector('.tooltip-text').innerText = t.notif;
+        document.getElementById('settings-title').innerText = t.settings;
+        document.getElementById('lang-title').innerText = t.langTitle;
+        document.getElementById('time-title').innerText = t.timeTitle;
+        document.getElementById('time-sub').innerText = t.timeSub;
+        document.getElementById('audio-title').innerText = t.audioTitle;
+        document.getElementById('audio-sub').innerText = t.audioSub;
+        document.getElementById('back-home-btn').innerText = t.save;
 
-        const gearIcon = document.querySelector('.fa-gear');
-        if(gearIcon) gearIcon.closest('a, div').querySelector('.tooltip-text').innerText = t.settings;
-
-        const userIcon = document.querySelector('.fa-user');
-        if(userIcon) userIcon.closest('a, div').querySelector('.tooltip-text').innerText = t.profile;
+        const audioSelect = document.getElementById('audio-quality-select');
+        if(audioSelect) {
+            Array.from(audioSelect.options).forEach((opt, i) => opt.innerText = t.audioOpt[i]);
+        }
 
         const cityInput = document.getElementById('wf-city-input');
         if (cityInput) cityInput.placeholder = t.weatherSearch;
-
         const weatherStats = document.querySelectorAll('.wf-stat-item h2');
         if (weatherStats.length >= 4) {
-            weatherStats[0].innerText = t.max;
-            weatherStats[1].innerText = t.min;
-            weatherStats[2].innerText = t.humidity;
-            weatherStats[3].innerText = t.wind;
+            weatherStats[0].innerText = t.max; weatherStats[1].innerText = t.min;
+            weatherStats[2].innerText = t.humidity; weatherStats[3].innerText = t.wind;
         }
 
-        const tempDesc = document.querySelector('#wf-main-temp div p:last-child');
-        if (tempDesc) tempDesc.innerText = t.tempUnit;
-
-        const h2Main = document.querySelectorAll('#main-content h2');
-        if (h2Main.length >= 2) {
-            h2Main[0].innerText = t.artists;
-            h2Main[1].innerText = t.albums;
-        }
-
-        const settingsTitle = document.querySelector('#settings-page h2');
-        if(settingsTitle) settingsTitle.innerText = t.settings;
-        btnBackHome.innerText = t.save;
+        document.getElementById('notif-page-title').innerText = t.notif;
+        document.getElementById('back-home-notif').innerText = t.back;
+        document.getElementById('profile-page-title').innerText = t.profile;
+        document.getElementById('profile-stats').innerText = t.profileStats;
+        document.getElementById('back-home-profile').innerText = t.back;
     }
 
+    function showOnly(section) {
+        [mainSection, settingsSection, notifPage, profilePage].forEach(s => {
+            if(s) s.style.display = 'none';
+        });
+        section.style.display = 'block';
+    }
+
+    document.getElementById('config-nav-btn').addEventListener('click', () => showOnly(settingsSection));
+    document.getElementById('home-nav-btn').addEventListener('click', (e) => { e.preventDefault(); showOnly(mainSection); });
+    document.getElementById('notif-nav-btn').addEventListener('click', () => showOnly(notifPage));
+    document.getElementById('profile-nav-btn').addEventListener('click', () => showOnly(profilePage));
+
+    [document.getElementById('back-home-notif'), document.getElementById('back-home-profile')].forEach(btn => {
+        if(btn) btn.addEventListener('click', () => showOnly(mainSection));
+    });
+
+    document.getElementById('back-home-btn').addEventListener('click', () => {
+        saveSettings();
+        showOnly(mainSection);
+    });
+
+    function updateClock() {
+        const clockElement = document.getElementById('brasilia-clock');
+        if (clockElement) {
+            const is24h = timeSwitch.checked;
+            const options = { 
+                hour: '2-digit', minute: '2-digit', 
+                hour12: !is24h, timeZone: 'America/Sao_Paulo' 
+            };
+            clockElement.textContent = new Intl.DateTimeFormat('pt-BR', options).format(new Date());
+        }
+    }
+    setInterval(updateClock, 1000);
+
     function saveSettings() {
-        localStorage.setItem('user_spotify_config', JSON.stringify({
-            lang: languageSelect.value,
-            is24h: timeSwitch.checked
-        }));
+        const config = { lang: languageSelect.value, is24h: timeSwitch.checked };
+        localStorage.setItem('user_spotify_config', JSON.stringify(config));
+        applyLanguage(config.lang);
     }
 
     function loadSettings() {
@@ -300,13 +316,7 @@ document.addEventListener("DOMContentLoaded", () => {
         updateClock();
     }
 
-    btnBackHome.addEventListener('click', () => {
-        saveSettings();
-        togglePage(false);
-    });
-
     languageSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
     timeSwitch.addEventListener('change', updateClock);
-
     loadSettings();
 });

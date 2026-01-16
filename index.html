@@ -28,7 +28,7 @@
 
             <div class="library-header">
                 <div class="nav-library">
-                    <p> Sua Biblioteca</p>
+                    <p id="txt-library"> Sua Biblioteca</p>
                     <div class="icon-btn plus-btn">
                         <i class="fa-solid fa-plus"></i>
                         <span class="tooltip-text">Criar playlist ou pasta</span>
@@ -37,9 +37,9 @@
             </div>
 
             <div class="nav-playlist">
-                <h5>Crie sua Primeira Playlist</h5>
-                <p>É fácil, vamos te ajudar.</p>
-                <button>Criar Playlist</button>
+                <h5 id="txt-playlist-title">Crie sua Primeira Playlist</h5>
+                <p id="txt-playlist-sub">É fácil, vamos te ajudar.</p>
+                <button id="btn-create-playlist">Criar Playlist</button>
             </div>
             <div id="wf-main-container">
                 <form id="wf-search-form">
@@ -114,11 +114,11 @@
 
                 <header class="search-bar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input placeholder="O que você quer ouvir?">
+                    <input id="main-search-input" placeholder="O que você quer ouvir?">
                 </header>
 
                 <div class="user-controls">
-                    <div class="icon-btn novidades">
+                    <div class="icon-btn novidades" id="notif-nav-btn">
                         <i class="fa-regular fa-bell"></i>
                         <span class="tooltip-text">Novidades</span>
                     </div>
@@ -126,7 +126,7 @@
                         <i class="fa-solid fa-gear"></i>
                         <span class="tooltip-text">Configurações</span>
                     </div>
-                    <div class="icon-btn user">
+                    <div class="icon-btn user" id="profile-nav-btn">
                         <i class="fa-solid fa-user"></i>
                         <span class="tooltip-text">Perfil</span>
                     </div>
@@ -134,19 +134,19 @@
             </div>
 
             <section class="content" id="main-content">
-                <h2>Artistas Populares</h2>
+                <h2 id="title-artists">Artistas Populares</h2>
                 <div class="artists-grid"></div>
-                <h2>Álbuns Populares</h2>
+                <h2 id="title-albums">Álbuns Populares</h2>
                 <div class="albums-grid"></div>
             </section>
 
             <section class="content" id="settings-page" style="display: none;">
-                <h2>Configurações</h2>
+                <h2 id="settings-title">Configurações</h2>
                 <div class="settings-container">
                     <div class="setting-item">
                         <div class="setting-info">
-                            <h3>Horário</h3>
-                            <p>Escolha sua preferência de formato: 12 horas ou 24 horas.</p>
+                            <h3 id="time-title">Horário</h3>
+                            <p id="time-sub">Escolha sua preferência de formato: 12 horas ou 24 horas.</p>
                         </div>
                         <label class="switch">
                             <input type="checkbox" id="time-format-switch" checked>
@@ -156,21 +156,21 @@
 
                     <div class="setting-item">
                         <div class="setting-info">
-                            <h3>Qualidade do Áudio</h3>
-                            <p>Ajuste a fidelidade sonora das faixas.</p>
+                            <h3 id="audio-title">Qualidade do Áudio</h3>
+                            <p id="audio-sub">Ajuste a fidelidade sonora das faixas.</p>
                         </div>
-                        <select class="settings-select">
-                            <option>Automática</option>
-                            <option>Baixa</option>
-                            <option>Normal</option>
-                            <option selected>Alta (Recomendado)</option>
+                        <select class="settings-select audio-select" id="audio-quality-select">
+                            <option value="auto">Automática</option>
+                            <option value="low">Baixa</option>
+                            <option value="normal">Normal</option>
+                            <option value="high" selected>Alta (Recomendado)</option>
                         </select>
                     </div>
 
                     <div class="setting-item">
                         <div class="setting-info">
-                            <h3>Idioma</h3>
-                            <p>Escolha o idioma da interface.</p>
+                            <h3 id="lang-title">Idioma</h3>
+                            <p id="lang-sub">Escolha o idioma da interface.</p>
                         </div>
                         <select class="settings-select" id="language-select">
                             <option value="pt-BR" selected>Português do Brasil</option>
@@ -179,6 +179,31 @@
                         </select>
                     </div>
                     <button class="nav-playlist-btn-save" id="back-home-btn">Salvar e Voltar</button>
+                </div>
+            </section>
+
+            <section class="content" id="notifications-page" style="display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 id="notif-page-title">O que há de novo</h2>
+                    <button class="nav-playlist-btn-save" id="back-home-notif">Voltar</button>
+                </div>
+                <div class="settings-container">
+                    <div class="setting-item notif-item" style="border-bottom: 1px solid #333; padding: 15px 0; display: flex; align-items: center; justify-content: flex-start; gap: 15px;">
+                        <img src="./img/artista-henrique-juliano.jpg" alt="Lançamento" style="width: 60px; height: 60px; border-radius: 4px; object-fit: cover; flex-shrink: 0;">
+                        <div class="setting-info" style="margin: 0;">
+                            <h3 id="notif-heading" style="margin: 0 0 5px 0;">Novos Lançamentos</h3>
+                            <p id="notif-subtext" style="color: #b3b3b3; font-size: 0.9rem; margin: 0;">Henrique & Juliano acabaram de lançar um novo álbum.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content" id="profile-page" style="display: none;">
+                <div style="text-align: center; padding: 40px; background: linear-gradient(to bottom, #282828, #121212); border-radius: 12px;">
+                    <img src="https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150" style="border-radius: 50%; margin-bottom: 20px;">
+                    <h1 id="profile-page-title">Seu Perfil</h1>
+                    <p id="profile-stats" style="color: #b3b3b3;">0 Playlists • 0 Seguidores</p>
+                    <button class="nav-playlist-btn-save" id="back-home-profile" style="margin-top: 20px;">Voltar ao Início</button>
                 </div>
             </section>
         </main>
@@ -190,12 +215,16 @@
         const volumeSlider = document.getElementById('volume-slider');
 
         function updateVolumeBackground() {
-            const value = (volumeSlider.value - volumeSlider.min) / (volumeSlider.max - volumeSlider.min) * 100;
-            volumeSlider.style.background = `linear-gradient(to right, #1db954 ${value}%, rgba(255, 255, 255, 0.1) ${value}%)`;
+            if (volumeSlider) {
+                const value = (volumeSlider.value - volumeSlider.min) / (volumeSlider.max - volumeSlider.min) * 100;
+                volumeSlider.style.background = `linear-gradient(to right, #1db954 ${value}%, rgba(255, 255, 255, 0.1) ${value}%)`;
+            }
         }
 
-        volumeSlider.addEventListener('input', updateVolumeBackground);
-        updateVolumeBackground();
+        if (volumeSlider) {
+            volumeSlider.addEventListener('input', updateVolumeBackground);
+            updateVolumeBackground();
+        }
     </script>
 
     <div id="player-bar" class="player-bar-hidden">
