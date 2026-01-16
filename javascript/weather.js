@@ -11,7 +11,6 @@ document.querySelector('#wf-search-form').addEventListener('submit', async (even
 
     const apiKey = '8a60b2de14f7a17c7a11706b2cfcd87c';
     
-    // Pega o idioma do seletor
     const langSelect = document.querySelectorAll('.settings-select')[1];
     const currentLangValue = langSelect ? langSelect.value : "pt-BR";
     
@@ -39,16 +38,14 @@ document.querySelector('#wf-search-form').addEventListener('submit', async (even
         const json = await results.json();
 
         if (json.cod === 200) {
-            // --- TRADUTOR LITERAL MANUAL ---
             let finalDescription = json.weather[0].description;
 
             if (currentLangValue === "es-ES") {
-                // Aqui nós forçamos a tradução literal que tu queres
                 if (finalDescription.toLowerCase() === "algo de nubes") {
                     finalDescription = "algunas nubes";
                 }
                 if (finalDescription.toLowerCase() === "cielo claro") {
-                    finalDescription = "cielo despejado"; // Exemplo de outra correção literal
+                    finalDescription = "cielo despejado";
                 }
             }
 
@@ -58,7 +55,7 @@ document.querySelector('#wf-search-form').addEventListener('submit', async (even
                 temp: json.main.temp,
                 tempMax: json.main.temp_max,
                 tempMin: json.main.temp_min,
-                description: finalDescription, // Usa a nossa descrição corrigida
+                description: finalDescription,
                 tempIcon: json.weather[0].icon,
                 windSpeed: json.wind.speed,
                 humidity: json.main.humidity,
