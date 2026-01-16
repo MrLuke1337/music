@@ -319,53 +319,66 @@ document.addEventListener("DOMContentLoaded", () => {
     languageSelect.addEventListener('change', (e) => applyLanguage(e.target.value));
     timeSwitch.addEventListener('change', updateClock);
     loadSettings();
-});
 
-const profilePicDisplay = document.getElementById('profile-pic-display');
-const profileUpload = document.getElementById('profile-upload');
-const changePicBtn = document.getElementById('change-pic-btn');
-const removePicBtn = document.getElementById('remove-pic-btn');
-const defaultAvatar = "https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150";
+    const profilePicDisplay = document.getElementById('profile-pic-display');
+    const profileUpload = document.getElementById('profile-upload');
+    const changePicBtn = document.getElementById('change-pic-btn');
+    const removePicBtn = document.getElementById('remove-pic-btn');
+    const defaultAvatar = "https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150";
 
-function loadProfileImage() {
-    const savedImage = localStorage.getItem('user_profile_image');
-    if (savedImage) {
-        profilePicDisplay.src = savedImage;
-        removePicBtn.style.display = "block";
-    } else {
-        profilePicDisplay.src = defaultAvatar;
-        removePicBtn.style.display = "none";
+    function loadProfileImage() {
+        const savedImage = localStorage.getItem('user_profile_image');
+        if (savedImage) {
+            profilePicDisplay.src = savedImage;
+            if (removePicBtn) removePicBtn.style.display = "block";
+        } else {
+            profilePicDisplay.src = defaultAvatar;
+            if (removePicBtn) removePicBtn.style.display = "none";
+        }
     }
-}
 
-changePicBtn.addEventListener('click', () => {
-    profileUpload.click();
-});
+    if (changePicBtn) {
+        changePicBtn.addEventListener('click', () => profileUpload.click());
+    }
 
-profileUpload.addEventListener('change', function() {
-    const file = this.files[0];
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = function(e) {
-            const base64Image = e.target.result;
-            profilePicDisplay.src = base64Image;
-            localStorage.setItem('user_profile_image', base64Image);
-            removePicBtn.style.display = "block";
-        };
-        reader.readAsDataURL(file);
+    if (profileUpload) {
+        profileUpload.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                if (file.size > 2 * 1024 * 1024) {
+                    alert("A imagem é muito grande. Escolha uma de até 2MB.");
+                    return;
+                }
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const base64Image = e.target.result;
+                    profilePicDisplay.src = base64Image;
+                    localStorage.setItem('user_profile_image', base64Image);
+                    if (removePicBtn) removePicBtn.style.display = "block";
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+    }
+
+    if (removePicBtn) {
+        removePicBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profilePicDisplay.src = defaultAvatar;
+            localStorage.removeItem('user_profile_image');
+            profileUpload.value = "";
+            removePicBtn.style.display = "none";
+        });
+    }
+
+    loadProfileImage();
+
+    const closePlayerBtn = document.getElementById('close-player-btn');
+    if (closePlayerBtn) {
+        closePlayerBtn.addEventListener('click', () => {
+            playerBar.classList.add('player-bar-hidden');
+            currentAudio.pause();
+            isPlaying = false;
+        });
     }
 });
-
-removePicBtn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    profilePicDisplay.src = defaultAvatar;
-    localStorage.removeItem('user_profile_image');
-    profileUpload.value = "";
-    removePicBtn.style.display = "none";
-});
-
-document.getElementById('close-player-btn').addEventListener('click', () => {
-    document.getElementById('player-bar').classList.add('player-bar-hidden');
-});
-
-loadProfileImage();
