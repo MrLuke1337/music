@@ -312,6 +312,11 @@ main {
     pointer-events: none;
 }
 
+.plus-btn .tooltip-text {
+    bottom: auto;
+    top: -35px;
+}
+
 .icon-btn:hover .tooltip-text {
     visibility: visible;
     opacity: 1;
