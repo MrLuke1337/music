@@ -320,3 +320,50 @@ document.addEventListener("DOMContentLoaded", () => {
     timeSwitch.addEventListener('change', updateClock);
     loadSettings();
 });
+
+const profilePicDisplay = document.getElementById('profile-pic-display');
+const profileUpload = document.getElementById('profile-upload');
+const changePicBtn = document.getElementById('change-pic-btn');
+const removePicBtn = document.getElementById('remove-pic-btn');
+const defaultAvatar = "https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150";
+
+function loadProfileImage() {
+    const savedImage = localStorage.getItem('user_profile_image');
+    if (savedImage) {
+        profilePicDisplay.src = savedImage;
+        removePicBtn.style.display = "block";
+    } else {
+        profilePicDisplay.src = defaultAvatar;
+        removePicBtn.style.display = "none";
+    }
+}
+
+changePicBtn.addEventListener('click', () => {
+    profileUpload.click();
+});
+
+// Lógica de Upload
+profileUpload.addEventListener('change', function() {
+    const file = this.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const base64Image = e.target.result;
+            profilePicDisplay.src = base64Image;
+            localStorage.setItem('user_profile_image', base64Image);
+            removePicBtn.style.display = "block";
+        };
+        reader.readAsDataURL(file);
+    }
+});
+
+// Lógica de Remover Foto
+removePicBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    profilePicDisplay.src = defaultAvatar;
+    localStorage.removeItem('user_profile_image');
+    profileUpload.value = "";
+    removePicBtn.style.display = "none";
+});
+
+loadProfileImage();

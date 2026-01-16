@@ -775,3 +775,57 @@ input:checked + .slider:before {
     font-weight: bold;
     cursor: pointer;
 }
+
+.profile-pic-wrapper {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    margin: 0 auto;
+    border-radius: 50%;
+    overflow: hidden;
+    cursor: pointer;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+#profile-pic-display {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.profile-pic-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.profile-pic-wrapper:hover .profile-pic-overlay {
+    opacity: 1;
+}
+
+.profile-pic-wrapper:hover #profile-pic-display {
+    transform: scale(1.1);
+}
+
+.profile-pic-overlay span {
+    color: white;
+    font-size: 13px;
+    font-weight: bold;
+    padding: 10px;
+    width: 100%;
+    transition: background 0.2s;
+}
+
+.profile-pic-overlay span:hover {
+    background: rgba(255, 255, 255, 0.1);
+}

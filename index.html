@@ -199,15 +199,24 @@
             </section>
 
             <section class="content" id="profile-page" style="display: none;">
-                <div style="text-align: center; padding: 40px; background: linear-gradient(to bottom, #282828, #121212); border-radius: 12px;">
-                    <img src="https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150" style="border-radius: 50%; margin-bottom: 20px;">
-                    <h1 id="profile-page-title">Seu Perfil</h1>
-                    <p id="profile-stats" style="color: #b3b3b3;">0 Playlists • 0 Seguidores</p>
-                    <button class="nav-playlist-btn-save" id="back-home-profile" style="margin-top: 20px;">Voltar ao Início</button>
-                </div>
-            </section>
-        </main>
+    <div style="text-align: center; padding: 40px; background: linear-gradient(to bottom, #282828, #121212); border-radius: 12px;">
+        
+        <input type="file" id="profile-upload" accept="image/*" style="display: none;">
+        
+        <div class="profile-pic-wrapper">
+            <img id="profile-pic-display" src="https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150">
+            
+            <div class="profile-pic-overlay">
+                <span id="change-pic-btn"><i class="fa-solid fa-camera"></i> Alterar</span>
+                <span id="remove-pic-btn" style="color: #ff4d4d; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-trash"></i> Remover</span>
+            </div>
+        </div>
+
+        <h1 id="profile-page-title" style="margin-top: 20px;">Seu Perfil</h1>
+        <p id="profile-stats" style="color: #b3b3b3;">0 Playlists • 0 Seguidores</p>
+        <button class="nav-playlist-btn-save" id="back-home-profile" style="margin-top: 20px;">Voltar</button>
     </div>
+</section>
 
     <script src="script.js"></script>
     <script src="./javascript/weather.js"></script>
