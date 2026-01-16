@@ -433,7 +433,6 @@ main {
     transition: all 0.3s ease;
 }
 
-/* NOVO ESTILO DO BOTÃO MINIMIZAR */
 #minimize-btn {
     position: absolute;
     top: 10px;

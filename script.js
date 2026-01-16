@@ -24,7 +24,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentTrackIndex = 0;
     let lastVolume = 1;
 
-    // Pegando as coisas do HTML pra usar aqui
     const mainPlayIcon = document.getElementById('main-play-icon');
     const playerBar = document.getElementById('player-bar');
     const prevIcon = document.getElementById('prev-icon');
@@ -35,13 +34,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const currentTimeEl = document.getElementById('current-time');
     const totalDurationEl = document.getElementById('total-duration');
     
-    // NOVO: Pegando o botão de minimizar
     const minimizeBtn = document.getElementById('minimize-btn');
 
-    // Começa escondido pra não ficar feio
     playerBar.classList.add('player-bar-hidden');
 
-    // Pra converter os segundos doidos pra tempo normal
     function formatTime(seconds) {
         if (isNaN(seconds)) return "0:00";
         const min = Math.floor(seconds / 60);
@@ -62,19 +58,15 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('player-artist').innerText = track.artists || "Artista";
         document.getElementById('player-img').src = track.image;
 
-        // Só mostra a barra quando clica no play
         playerBar.classList.remove('player-bar-hidden');
-        playerBar.classList.remove('player-bar-minimized'); // Garante que abra ao dar play
+        playerBar.classList.remove('player-bar-minimized');
         mainPlayIcon.classList.replace('fa-circle-play', 'fa-circle-pause');
     }
-
-    // LÓGICA DE MINIMIZAR
     minimizeBtn.addEventListener('click', (e) => {
-        e.stopPropagation(); // Evita que o clique "suba" para outros elementos
+        e.stopPropagation();
         playerBar.classList.toggle('player-bar-minimized');
     });
 
-    // Atualiza a barra de progresso enquanto a música toca
     currentAudio.addEventListener('timeupdate', () => {
         if (currentAudio.duration) {
             const progress = (currentAudio.currentTime / currentAudio.duration) * 100;
@@ -85,7 +77,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Mexer na barra de música na mão
     progressSlider.addEventListener('input', () => {
         if (currentAudio.duration) {
             const time = (progressSlider.value / 100) * currentAudio.duration;
@@ -93,7 +84,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Botão de play e pause
     mainPlayIcon.addEventListener('click', () => {
         if (isPlaying) {
             currentAudio.pause();
@@ -105,19 +95,16 @@ document.addEventListener("DOMContentLoaded", () => {
         isPlaying = !isPlaying;
     });
 
-    // Pular pra próxima
     nextIcon.addEventListener('click', () => {
         currentTrackIndex = (currentTrackIndex + 1) % currentPlaylist.length;
         playTrack(currentTrackIndex, currentPlaylist);
     });
 
-    // Voltar pra anterior
     prevIcon.addEventListener('click', () => {
         currentTrackIndex = (currentTrackIndex - 1 + currentPlaylist.length) % currentPlaylist.length;
         playTrack(currentTrackIndex, currentPlaylist);
     });
 
-    // Lógica do volume (pra não estourar o ouvido kkk)
     const updateVolumeUI = (val) => {
         const percentage = val * 100;
         volumeSlider.style.background = `linear-gradient(to right, #1db954 ${percentage}%, rgba(255, 255, 255, 0.1) ${percentage}%)`;
@@ -131,7 +118,6 @@ document.addEventListener("DOMContentLoaded", () => {
         updateVolumeUI(e.target.value);
     });
 
-    // Clicar no ícone pra mutar
     volumeIcon.addEventListener('click', () => {
         if (currentAudio.volume > 0) {
             lastVolume = currentAudio.volume;
@@ -144,10 +130,8 @@ document.addEventListener("DOMContentLoaded", () => {
         updateVolumeUI(currentAudio.volume);
     });
 
-    // Acabou a música? Pula pra próxima sozinho
     currentAudio.addEventListener('ended', () => nextIcon.click());
 
-    // Renderizando os cards dos artistas
     const artistGrid = document.querySelector(".artists-grid");
     artistsData.forEach((artist, index) => {
         const artistCard = document.createElement("div");
@@ -162,7 +146,6 @@ document.addEventListener("DOMContentLoaded", () => {
         artistGrid.appendChild(artistCard);
     });
 
-    // Renderizando os álbuns
     const albumsGrid = document.querySelector(".albums-grid");
     albumsData.forEach((album, index) => {
         const albumCard = document.createElement("div");
