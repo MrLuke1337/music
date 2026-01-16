@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://kit.fontawesome.com/20aad5a1dc.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+    <link rel="icon" href="https://cdn-icons-png.flaticon.com/128/2111/2111624.png" type="image/png" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home">
+    <link rel="stylesheet" href="./styles/weather.css">
+    <title>Spotify – Web player: música para todas as pessoas</title>
+</head>
+
+<body>
+    <div class="container">
+        <nav class="sidebar">
+            <div class="header-sidebar">
+                <a href="index.html" class="nav-logo">
+                    <i class="fa-brands fa-spotify"></i>
+                </a>
+                <div class="nav-time-container">
+                    <span class="nav-time" id="brasilia-clock">00:00</span>
+                </div>
+            </div>
+
+            <div class="library-header">
+                <div class="nav-library">
+                    <p> Sua Biblioteca</p>
+                    <div class="icon-btn plus-btn">
+                        <i class="fa-solid fa-plus"></i>
+                        <span class="tooltip-text">Criar playlist ou pasta</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="nav-playlist">
+                <h5>Crie sua Primeira Playlist</h5>
+                <p>É fácil, vamos te ajudar.</p>
+                <button>Criar Playlist</button>
+            </div>
+
+            <div id="wf-main-container">
+                <form id="wf-search-form">
+                    <i class="fa-solid fa-location-dot"></i>
+                    <input type="search" id="wf-city-input" placeholder="Buscar cidade">
+                    <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
+                </form>
+                <div id="wf-weather-result">
+                    <h1 id="wf-location-title">--</h1>
+                    <div id="wf-main-temp">
+                        <img id="wf-temp-icon" src="" alt="">
+                        <div>
+                            <p id="wf-temp-now">--</p>
+                            <p id="wf-description">--</p>
+                        </div>
+                    </div>
+                    <div id="wf-extra-stats">
+                        <div class="wf-stat-item">
+                            <i class="fa-solid fa-temperature-high" id="wf-icon-max"></i>
+                            <div>
+                                <h2>Máx</h2>
+                                <p id="wf-temp-max">--</p>
+                            </div>
+                        </div>
+                        <div class="wf-stat-item">
+                            <i class="fa-solid fa-temperature-low" id="wf-icon-min"></i>
+                            <div>
+                                <h2>Mín</h2>
+                                <p id="wf-temp-min">--</p>
+                            </div>
+                        </div>
+                        <div class="wf-stat-item">
+                            <i class="fa-solid fa-droplet" id="wf-icon-humidity"></i>
+                            <div>
+                                <h2>Umidade</h2>
+                                <p id="wf-humidity-val">--</p>
+                            </div>
+                        </div>
+                        <div class="wf-stat-item">
+                            <i class="fa-solid fa-wind" id="wf-icon-wind"></i>
+                            <div>
+                                <h2>Vento</h2>
+                                <p id="wf-wind-val">--</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="wf-error-alert"></div>
+            </div>
+
+            <div class="nav-footer">
+                <div class="links">
+                    <a href="#">Legal</a>
+                    <a href="#">Centro de Privacidade</a>
+                    <a href="#">Política de Privacidade</a>
+                    <a href="#">Cookies</a>
+                    <a href="#">Sobre anúncios</a>
+                    <a href="#">Acessibilidade</a>
+                </div>
+                <button class="nav-lang-button"><i class="fa-solid fa-globe"></i> Português do Brasil</button>
+            </div>
+        </nav>
+
+        <main>
+            <div class="top-nav">
+                <div class="nav-controls">
+                    <a href="#" class="icon-btn active home-link">
+                        <span class="material-symbols-outlined">home</span>
+                        <span class="tooltip-text">Início</span>
+                    </a>
+                </div>
+
+                <header class="search-bar">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input placeholder="O que você quer ouvir?">
+                </header>
+
+                <div class="user-controls">
+                    <div class="icon-btn novidades">
+                        <i class="fa-regular fa-bell"></i>
+                        <span class="tooltip-text">Novidades</span>
+                    </div>
+                    <div class="icon-btn config">
+                        <i class="fa-solid fa-gear"></i>
+                        <span class="tooltip-text">Configurações</span>
+                    </div>
+                    <div class="icon-btn user">
+                        <i class="fa-solid fa-user"></i>
+                        <span class="tooltip-text">Perfil</span>
+                    </div>
+                </div>
+            </div>
+
+            <section class="content">
+                <h2>Artistas Populares</h2>
+                <div class="artists-grid"></div>
+                <h2>Álbuns Populares</h2>
+                <div class="albums-grid"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="script.js"></script>
+    <script src="./javascript/weather.js"></script>
+    <script>
+        function updateBrasiliaTime() {
+            const clockElement = document.getElementById('brasilia-clock');
+            if (clockElement) {
+                const options = { hour: '2-digit', minute: '2-digit', hourCycle: 'h23', timeZone: 'America/Sao_Paulo' };
+                clockElement.textContent = new Intl.DateTimeFormat('pt-BR', options).format(new Date());
+            }
+        }
+        setInterval(updateBrasiliaTime, 1000);
+        updateBrasiliaTime();
+
+
+const volumeSlider = document.getElementById('volume-slider');
+
+function updateVolumeBackground() {
+    const value = (volumeSlider.value - volumeSlider.min) / (volumeSlider.max - volumeSlider.min) * 100;
+    volumeSlider.style.background = `linear-gradient(to right, #1db954 ${value}%, rgba(255, 255, 255, 0.1) ${value}%)`;
+}
+
+volumeSlider.addEventListener('input', updateVolumeBackground);
+updateVolumeBackground();
+
+    </script>
+
+    <div id="player-bar" class="player-bar-hidden">
+        <i class="fa-solid fa-angle-down" id="minimize-btn"></i>
+        
+        <div class="player-content-info">
+            <img id="player-img" src="" alt="Capa">
+            <div class="player-info">
+                <h4 id="player-title">Nome</h4>
+                <p id="player-artist">Artista</p>
+            </div>
+        </div>
+
+        <div class="player-controls">
+            <div class="control-buttons">
+                <i class="fa-solid fa-backward-step" id="prev-icon"></i>
+                <i class="fa-solid fa-circle-play" id="main-play-icon"></i>
+                <i class="fa-solid fa-forward-step" id="next-icon"></i>
+            </div>
+            <div class="playback-bar">
+                <span id="current-time">0:00</span>
+                <input type="range" id="progress-slider" min="0" max="100" value="0">
+                <span id="total-duration">0:00</span>
+            </div>
+        </div>
+
+        <div class="player-volume-container">
+            <i class="fa-solid fa-volume-high" id="volume-icon"></i>
+            <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
+        </div>
+    </div>
+</body>
+
+</html>

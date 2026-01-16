@@ -1,0 +1,119 @@
+#wf-main-container {
+    background-color: #242424;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px;
+    font-family: 'Poppins', sans-serif;
+    color: white;
+}
+
+#wf-search-form {
+    display: flex;
+    align-items: center;
+    background: #1a1a1a;
+    padding: 8px;
+    border-radius: 5px;
+    gap: 10px;
+    border: 1px solid #333;
+}
+
+#wf-city-input {
+    background: transparent;
+    border: none;
+    color: white;
+    outline: none;
+    width: 100%;
+    font-size: 14px;
+}
+
+#wf-search-form button {
+    background: transparent;
+    border: none;
+    color: #b3b3b3;
+    cursor: pointer;
+}
+
+#wf-weather-result {
+    display: none;
+    margin-top: 15px;
+}
+
+#wf-weather-result.show {
+    display: block;
+}
+
+#wf-location-title {
+    font-size: 16px;
+    text-align: center;
+    margin-bottom: 10px;
+    color: white;
+}
+
+#wf-main-temp {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1db954, #121212);
+    padding: 10px;
+    border-radius: 8px;
+    gap: 15px;
+}
+
+#wf-temp-now {
+    font-size: 28px;
+    font-weight: bold;
+    margin: 0;
+}
+
+#wf-description {
+    font-size: 12px;
+    text-transform: capitalize;
+    margin: 0;
+}
+
+#wf-extra-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 15px;
+}
+
+.wf-stat-item {
+    background: #1a1a1a;
+    padding: 10px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.wf-stat-item i {
+    font-size: 16px;
+    width: 20px;
+    text-align: center;
+}
+
+.wf-stat-item h2 {
+    font-size: 10px;
+    color: #b3b3b3;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.wf-stat-item p {
+    font-size: 12px;
+    margin: 0;
+    font-weight: bold;
+}
+
+#wf-icon-max { color: #ff5f5f; }
+#wf-icon-min { color: #5fafff; }
+#wf-icon-humidity { color: #0ea5e9; }
+#wf-icon-wind { color: #1db954; }
+
+#wf-error-alert {
+    color: #ff5f5f;
+    font-size: 12px;
+    text-align: center;
+    margin-top: 10px;
+}
