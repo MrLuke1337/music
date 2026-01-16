@@ -1,5 +1,5 @@
 Como reportar uma vulnerabilidade:
-A segurança da nossa comunidade e dos dados dos nossos artistas/ouvintes é nossa prioridade. Se você encontrar uma falha, por favor, não a publique em Issues ou redes sociais.
+A segurança da nossa comunidade e dos dados dos nossos artistas/ouvintes é nossa prioridade.
 
 Envie os detalhes para: .com (ou use a aba "Security" aqui no GitHub).
 
