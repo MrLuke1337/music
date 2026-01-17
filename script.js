@@ -195,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
             home: "Inicio", library: "Tu Biblioteca", createPl: "Crear lista o carpeta",
             artists: "Artistas Populares", albums: "Álbumes Populares", notif: "Novedades",
             settings: "Configuraciones", profile: "Perfil", save: "Guardar y Volver", back: "Volver",
-            search: "¿Qué quieres escuchar?", weatherSearch: "Buscar ciudad",
+            search: "¿Qué quieres escuchar?", weatherSearch: "Buscar cidade",
             humidity: "Humedad", wind: "Vento", max: "Temp. Máx", min: "Temp. Mín",
             tempUnit: "Grados Celsius", plTitle: "Crea tu primera lista",
             plSub: "Es fácil, te ayudaremos.", plBtn: "Crear lista",
@@ -320,6 +320,7 @@ document.addEventListener("DOMContentLoaded", () => {
     timeSwitch.addEventListener('change', updateClock);
     loadSettings();
 
+    // --- LÓGICA DE FOTO DE PERFIL (VERSÃO PERSISTENTE) ---
     const profilePicDisplay = document.getElementById('profile-pic-display');
     const profileUpload = document.getElementById('profile-upload');
     const changePicBtn = document.getElementById('change-pic-btn');
@@ -327,13 +328,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const defaultAvatar = "https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150";
 
     function loadProfileImage() {
-        const savedImage = localStorage.getItem('user_profile_image');
-        if (savedImage) {
-            profilePicDisplay.src = savedImage;
-            if (removePicBtn) removePicBtn.style.display = "block";
-        } else {
-            profilePicDisplay.src = defaultAvatar;
-            if (removePicBtn) removePicBtn.style.display = "none";
+        try {
+            const savedImage = localStorage.getItem('user_profile_image');
+            if (savedImage && savedImage.startsWith('data:image')) {
+                profilePicDisplay.src = savedImage;
+                if (removePicBtn) removePicBtn.style.display = "block";
+            } else {
+                profilePicDisplay.src = defaultAvatar;
+                if (removePicBtn) removePicBtn.style.display = "none";
+            }
+        } catch (err) {
+            console.error("Erro ao carregar imagem:", err);
         }
     }
 
@@ -345,16 +350,22 @@ document.addEventListener("DOMContentLoaded", () => {
         profileUpload.addEventListener('change', function() {
             const file = this.files[0];
             if (file) {
-                if (file.size > 2 * 1024 * 1024) {
-                    alert("A imagem é muito grande. Escolha uma de até 2MB.");
+                // No GitHub Pages, imagens > 1MB costumam falhar no LocalStorage
+                if (file.size > 1 * 1024 * 1024) { 
+                    alert("A imagem é muito grande para o navegador salvar. Tente uma menor que 1MB.");
                     return;
                 }
+
                 const reader = new FileReader();
                 reader.onload = function(e) {
                     const base64Image = e.target.result;
-                    profilePicDisplay.src = base64Image;
-                    localStorage.setItem('user_profile_image', base64Image);
-                    if (removePicBtn) removePicBtn.style.display = "block";
+                    try {
+                        profilePicDisplay.src = base64Image;
+                        localStorage.setItem('user_profile_image', base64Image);
+                        if (removePicBtn) removePicBtn.style.display = "block";
+                    } catch (error) {
+                        alert("Limite de memória atingido. Tente uma imagem menor.");
+                    }
                 };
                 reader.readAsDataURL(file);
             }
