@@ -44,6 +44,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const profilePage = document.getElementById('profile-page');
     const artistDetailsPage = document.getElementById('artist-details-page');
     const albumDetailsPage = document.getElementById('album-details-page');
+    const createPlaylistPage = document.getElementById('create-playlist-page');
+    const playlistDetailsPage = document.getElementById('playlist-details-page');
 
     const timeSwitch = document.getElementById('time-format-switch');
     const languageSelect = document.getElementById('language-select');
@@ -77,7 +79,9 @@ document.addEventListener("DOMContentLoaded", () => {
             notifItemTitle: "Novos Lançamentos", notifItemDesc: "Henrique & Juliano acabaram de lançar um novo álbum.",
             artistVerified: "Artista Verificado", artistFollow: "Seguir", artistPopular: "Populares",
             trackSuccess: "Sucesso 1", trackLive: "Ao Vivo", trackAcoustic: "Acústico", trackRemix: "Remix", trackFeat: "Ft. Convidado",
-            albumType: "Álbum", albumSongs: "músicas", albumTrackPrefix: "Faixa do Álbum", thTitle: "Título"
+            albumType: "Álbum", albumSongs: "músicas", albumTrackPrefix: "Faixa do Álbum", thTitle: "Título",
+            cpLabel: "Playlist", cpMainTitle: "Minha Playlist nº 1", lblPlName: "Nome", lblPlDesc: "Descrição",
+            btnSave: "Salvar", btnCancel: "Cancelar", plNamePlaceholder: "Adicione um nome", plDescPlaceholder: "Adicione uma descrição opcional"
         },
         "en-US": {
             home: "Home", library: "Your Library", createPl: "Create playlist or folder",
@@ -98,7 +102,9 @@ document.addEventListener("DOMContentLoaded", () => {
             notifItemTitle: "New Releases", notifItemDesc: "Henrique & Juliano just released a new album.",
             artistVerified: "Verified Artist", artistFollow: "Follow", artistPopular: "Popular",
             trackSuccess: "Hit 1", trackLive: "Live", trackAcoustic: "Acoustic", trackRemix: "Remix", trackFeat: "Feat. Guest",
-            albumType: "Album", albumSongs: "songs", albumTrackPrefix: "Album Track", thTitle: "Title"
+            albumType: "Album", albumSongs: "songs", albumTrackPrefix: "Album Track", thTitle: "Title",
+            cpLabel: "Playlist", cpMainTitle: "My Playlist #1", lblPlName: "Name", lblPlDesc: "Description",
+            btnSave: "Save", btnCancel: "Cancel", plNamePlaceholder: "Add a name", plDescPlaceholder: "Add an optional description"
         },
         "es-ES": {
             home: "Inicio", library: "Tu Biblioteca", createPl: "Crear lista o carpeta",
@@ -119,7 +125,9 @@ document.addEventListener("DOMContentLoaded", () => {
             notifItemTitle: "Nuevos Lanzamientos", notifItemDesc: "Henrique & Juliano acaban de lanzar un nuevo álbum.",
             artistVerified: "Artista Verificado", artistFollow: "Seguir", artistPopular: "Populares",
             trackSuccess: "Éxito 1", trackLive: "En Vivo", trackAcoustic: "Acústico", trackRemix: "Remezcla", trackFeat: "Ft. Invitado",
-            albumType: "Álbum", albumSongs: "canciones", albumTrackPrefix: "Pista del Álbum", thTitle: "Título"
+            albumType: "Álbum", albumSongs: "canciones", albumTrackPrefix: "Pista del Álbum", thTitle: "Título",
+            cpLabel: "Lista", cpMainTitle: "Mi Lista n.º 1", lblPlName: "Nombre", lblPlDesc: "Descripción",
+            btnSave: "Guardar", btnCancel: "Cancelar", plNamePlaceholder: "Añadir un nombre", plDescPlaceholder: "Añadir una descripción opcional"
         }
     };
 
@@ -292,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
     currentAudio.addEventListener('ended', () => nextIcon.click());
 
     function showOnly(section) {
-        [mainSection, settingsSection, notifPage, profilePage, artistDetailsPage, albumDetailsPage].forEach(s => {
+        [mainSection, settingsSection, notifPage, profilePage, artistDetailsPage, albumDetailsPage, createPlaylistPage, playlistDetailsPage].forEach(s => {
             if(s) s.style.display = 'none';
         });
         section.style.display = 'block';
@@ -301,13 +309,37 @@ document.addEventListener("DOMContentLoaded", () => {
 
     document.getElementById('config-nav-btn').addEventListener('click', () => showOnly(settingsSection));
     document.getElementById('home-nav-btn').addEventListener('click', (e) => { e.preventDefault(); showOnly(mainSection); });
+    
+    const logoLink = document.getElementById('logo-link');
+    if (logoLink) {
+        logoLink.addEventListener('click', (e) => { 
+            e.preventDefault(); 
+            showOnly(mainSection); 
+        });
+    }
+
     document.getElementById('notif-nav-btn').addEventListener('click', () => showOnly(notifPage));
     document.getElementById('profile-nav-btn').addEventListener('click', () => showOnly(profilePage));
+    
+    const openCreatePage = () => {
+        showOnly(createPlaylistPage);
+    };
+
+    const btnCreatePl = document.getElementById('btn-create-playlist');
+    const btnPlus = document.getElementById('btn-plus-create');
+    
+    if (btnCreatePl) btnCreatePl.addEventListener('click', openCreatePage);
+    if (btnPlus) btnPlus.addEventListener('click', openCreatePage);
+
+
+    document.getElementById('btn-cancel-playlist').addEventListener('click', () => showOnly(mainSection));
+
 
     [document.getElementById('back-home-notif'), 
      document.getElementById('back-home-profile'),
      document.getElementById('back-home-artist'),
-     document.getElementById('back-home-album')].forEach(btn => {
+     document.getElementById('back-home-album'),
+     document.getElementById('back-home-playlist')].forEach(btn => {
         if(btn) btn.addEventListener('click', () => showOnly(mainSection));
     });
 
@@ -372,7 +404,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('album-artist-name').innerText = album.artists;
         document.getElementById('album-year').innerText = album.year;
         
-        // Translate static parts
         document.getElementById('album-type-label').innerText = t.albumType;
         document.getElementById('th-title').innerText = t.thTitle;
         document.getElementById('back-home-album').innerText = "< " + t.back;
@@ -531,6 +562,25 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById('back-home-artist').innerText = "< " + t.back;
         document.getElementById('back-home-album').innerText = "< " + t.back;
         
+        document.getElementById('back-home-playlist').innerText = "< " + t.back;
+
+        const cpLabel = document.querySelector('.cp-label');
+        if(cpLabel) cpLabel.innerText = t.cpLabel;
+        const cpMainTitle = document.getElementById('cp-main-title');
+        if(cpMainTitle) cpMainTitle.innerText = t.cpMainTitle;
+        const lblPlName = document.getElementById('lbl-pl-name');
+        if(lblPlName) lblPlName.innerText = t.lblPlName;
+        const lblPlDesc = document.getElementById('lbl-pl-desc');
+        if(lblPlDesc) lblPlDesc.innerText = t.lblPlDesc;
+        const plNameInput = document.getElementById('pl-name-input');
+        if(plNameInput) plNameInput.placeholder = t.plNamePlaceholder;
+        const plDescInput = document.getElementById('pl-desc-input');
+        if(plDescInput) plDescInput.placeholder = t.plDescPlaceholder;
+        const btnSavePl = document.getElementById('btn-save-playlist');
+        if(btnSavePl) btnSavePl.innerText = t.btnSave;
+        const btnCancelPl = document.getElementById('btn-cancel-playlist');
+        if(btnCancelPl) btnCancelPl.innerText = t.btnCancel;
+        
 
         const langBtn = document.querySelector('.nav-lang-button');
         if(langBtn) {
@@ -626,6 +676,83 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
+    function openPlaylistDetails(playlist) {
+        document.getElementById('playlist-detail-title').innerText = playlist.name;
+        document.getElementById('playlist-detail-desc').innerText = playlist.desc || "";
+        
+        const colors = ['#535353', '#782b2b', '#2b4e78', '#2b7856', '#70782b', '#4e2b78', '#782b4e'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        playlistDetailsPage.style.background = `linear-gradient(to bottom, ${randomColor} 0%, #121212 400px)`;
+
+        showOnly(playlistDetailsPage);
+    }
+    
+    function renderSavedPlaylists() {
+        const playlists = JSON.parse(localStorage.getItem('my_custom_playlists')) || [];
+        const container = document.getElementById('playlists-container');
+        const emptyMsg = document.getElementById('empty-playlist-msg');
+    
+        if (!container) return; 
+    
+        if (playlists.length > 0) {
+            if(emptyMsg) emptyMsg.style.display = 'none';
+            container.style.display = 'block';
+            container.innerHTML = '';
+    
+            playlists.forEach(pl => {
+                const plElement = document.createElement('div');
+                plElement.className = 'playlist-item-sidebar';
+                plElement.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px; cursor: pointer; padding: 8px; border-radius: 4px;" class="playlist-row-hover">
+                        <div style="width: 48px; height: 48px; background: #282828; display: flex; align-items: center; justify-content: center; border-radius: 4px;">
+                            <i class="fa-solid fa-music" style="color: #b3b3b3;"></i>
+                        </div>
+                        <div style="overflow: hidden;">
+                            <p style="margin: 0; font-size: 14px; font-weight: bold; white-space: nowrap; text-overflow: ellipsis; overflow: hidden;">${pl.name}</p>
+                            <p style="margin: 0; font-size: 12px; color: #b3b3b3;">Playlist • Você</p>
+                        </div>
+                    </div>
+                `;
+                plElement.addEventListener('click', () => openPlaylistDetails(pl));
+                container.appendChild(plElement);
+            });
+        } else {
+            if(emptyMsg) emptyMsg.style.display = 'block';
+            container.style.display = 'none';
+        }
+    }
+
+    const btnSave = document.getElementById('btn-save-playlist');
+    if (btnSave) {
+        btnSave.addEventListener('click', () => {
+            const nameInput = document.getElementById('pl-name-input');
+            const descInput = document.getElementById('pl-desc-input');
+        
+            if (!nameInput || nameInput.value.trim() === "") {
+                alert("Por favor, adicione um nome.");
+                return;
+            }
+        
+            const newPlaylist = {
+                id: Date.now(),
+                name: nameInput.value,
+                desc: descInput ? descInput.value : ""
+            };
+        
+            const savedPlaylists = JSON.parse(localStorage.getItem('my_custom_playlists')) || [];
+            savedPlaylists.push(newPlaylist);
+            localStorage.setItem('my_custom_playlists', JSON.stringify(savedPlaylists));
+        
+            nameInput.value = "";
+            if(descInput) descInput.value = "";
+            
+            renderSavedPlaylists();
+            
+            openPlaylistDetails(newPlaylist);
+        });
+    }
+
+    renderSavedPlaylists();
     loadSettings();
     loadProfileImage();
     updateVolumeUI(volumeSlider.value);

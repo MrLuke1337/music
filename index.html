@@ -18,7 +18,7 @@
     <div class="container">
         <nav class="sidebar">
             <div class="header-sidebar">
-                <a href="index.html" class="nav-logo">
+                <a href="#" class="nav-logo" id="logo-link">
                     <i class="fa-brands fa-spotify"></i>
                 </a>
                 <div class="nav-time-container">
@@ -29,18 +29,21 @@
             <div class="library-header">
                 <div class="nav-library">
                     <p id="txt-library"> Sua Biblioteca</p>
-                    <div class="icon-btn plus-btn">
+                    <div class="icon-btn plus-btn" id="btn-plus-create">
                         <i class="fa-solid fa-plus"></i>
                         <span class="tooltip-text">Criar playlist ou pasta</span>
                     </div>
                 </div>
             </div>
 
-            <div class="nav-playlist">
-                <h5 id="txt-playlist-title">Crie sua Primeira Playlist</h5>
-                <p id="txt-playlist-sub">É fácil, vamos te ajudar.</p>
-                <button id="btn-create-playlist">Criar Playlist</button>
-            </div>
+           <div class="nav-playlist" id="empty-playlist-msg">
+    <h5 id="txt-playlist-title">Crie sua Primeira Playlist</h5>
+    <p id="txt-playlist-sub">É fácil, vamos te ajudar.</p>
+    <button id="btn-create-playlist">Criar Playlist</button>
+</div>
+
+<div id="playlists-container" style="display: none; padding: 10px;">
+    </div>
 
             <div id="wf-main-container">
                 <form id="wf-search-form">
@@ -139,6 +142,81 @@
                 <div class="artists-grid"></div>
                 <h2 id="title-albums">Álbuns Populares</h2>
                 <div class="albums-grid"></div>
+            </section>
+
+            <section class="content" id="create-playlist-page" style="display: none;">
+                <div class="create-playlist-container">
+                    <div class="cp-header">
+                        <div class="cp-image-placeholder">
+                            <i class="fa-solid fa-music"></i>
+                            <div class="cp-overlay">
+                                <i class="fa-solid fa-pencil"></i>
+                                <span>Escolher foto</span>
+                            </div>
+                        </div>
+                        <div class="cp-details">
+                            <span class="cp-label">Playlist</span>
+                            <h1 id="cp-main-title">Minha Playlist nº 1</h1>
+                            <div class="cp-inputs">
+                                <div class="cp-input-group">
+                                    <label id="lbl-pl-name">Nome</label>
+                                    <input type="text" id="pl-name-input" placeholder="Adicione um nome">
+                                </div>
+                                <div class="cp-input-group">
+                                    <label id="lbl-pl-desc">Descrição</label>
+                                    <textarea id="pl-desc-input" placeholder="Adicione uma descrição opcional"></textarea>
+                                </div>
+                            </div>
+                            <div class="cp-actions">
+                                <button class="nav-playlist-btn-save" id="btn-save-playlist">Salvar</button>
+                                <button class="nav-playlist-btn-save cancel-btn" id="btn-cancel-playlist">Cancelar</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="content" id="playlist-details-page" style="display: none;">
+                <div class="artist-header-actions" style="margin-bottom: 20px;">
+                    <button class="nav-playlist-btn-save" id="back-home-playlist" style="background: rgba(0,0,0,0.6); color: white; border: 1px solid #777;">&lt; Voltar</button>
+                </div>
+                
+                <div class="album-header-container">
+                    <div style="width: 232px; height: 232px; background: #282828; display: flex; align-items: center; justify-content: center; border-radius: 4px; box-shadow: 0 4px 60px rgba(0,0,0,0.5);">
+                        <i class="fa-solid fa-music" style="font-size: 64px; color: #7f7f7f;"></i>
+                    </div>
+                    <div class="album-info-content">
+                        <span class="album-type" id="playlist-type-label">Playlist Pública</span>
+                        <h1 id="playlist-detail-title" style="font-size: 4rem; font-weight: 900; margin: 0.1em 0;">Nome da Playlist</h1>
+                        <p id="playlist-detail-desc" style="color: #b3b3b3; margin-bottom: 10px;">Descrição da playlist</p>
+                        <div class="album-meta">
+                            <div style="width: 24px; height: 24px; background: #1db954; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: black; font-weight: bold; margin-right: 5px;">U</div>
+                            <span style="font-weight: 700;">Você</span>
+                            <span class="album-bullet">•</span>
+                            <span id="playlist-detail-stats">0 músicas</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="album-songs-section">
+                    <div class="album-actions-bar">
+                        <button class="play-main-btn"><i class="fa-solid fa-play"></i></button>
+                        <i class="fa-solid fa-ellipsis action-icon"></i>
+                    </div>
+            
+                    <div class="tracklist-header">
+                        <div class="th-num">#</div>
+                        <div class="th-title">Título</div>
+                        <div class="th-time"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+            
+                    <hr class="album-divider" style="display: block; border-top: 1px solid rgba(255,255,255,0.1);">
+                    
+                    <div class="songs-list" id="playlist-songs-list" style="padding: 20px; text-align: center; color: #b3b3b3;">
+                        <p>Esta playlist ainda está vazia.</p>
+                        <p style="font-size: 13px; margin-top: 10px;">Adicione músicas para começar a ouvir.</p>
+                    </div>
+                </div>
             </section>
 
             <section class="content" id="settings-page" style="display: none;">
@@ -285,7 +363,6 @@
                     <hr class="album-divider">
             
                     <div class="songs-list" id="album-songs-list">
-                        <!-- Tracks will be generated here -->
                     </div>
                 </div>
             </section>
