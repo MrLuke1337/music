@@ -41,6 +41,7 @@
                 <p id="txt-playlist-sub">É fácil, vamos te ajudar.</p>
                 <button id="btn-create-playlist">Criar Playlist</button>
             </div>
+
             <div id="wf-main-container">
                 <form id="wf-search-form">
                     <i class="fa-solid fa-location-dot"></i>
@@ -92,12 +93,12 @@
 
             <div class="nav-footer">
                 <div class="links">
-                    <a href="#">Legal</a>
-                    <a href="#">Centro de Privacidade</a>
-                    <a href="#">Política de Privacidade</a>
-                    <a href="#">Cookies</a>
-                    <a href="#">Sobre anúncios</a>
-                    <a href="#">Acessibilidade</a>
+                    <a href="#" id="link-legal">Legal</a>
+                    <a href="#" id="link-privacy-center">Centro de Privacidade</a>
+                    <a href="#" id="link-privacy-policy">Política de Privacidade</a>
+                    <a href="#" id="link-cookies">Cookies</a>
+                    <a href="#" id="link-ads">Sobre anúncios</a>
+                    <a href="#" id="link-access">Acessibilidade</a>
                 </div>
                 <button class="nav-lang-button"><i class="fa-solid fa-globe"></i> Português do Brasil</button>
             </div>
@@ -188,11 +189,11 @@
                     <button class="nav-playlist-btn-save" id="back-home-notif">Voltar</button>
                 </div>
                 <div class="settings-container">
-                    <div class="setting-item notif-item" style="border-bottom: 1px solid #333; padding: 15px 0; display: flex; align-items: center; justify-content: flex-start; gap: 15px;">
-                        <img src="./img/artista-henrique-juliano.jpg" alt="Lançamento" style="width: 60px; height: 60px; border-radius: 4px; object-fit: cover; flex-shrink: 0;">
-                        <div class="setting-info" style="margin: 0;">
-                            <h3 id="notif-heading" style="margin: 0 0 5px 0;">Novos Lançamentos</h3>
-                            <p id="notif-subtext" style="color: #b3b3b3; font-size: 0.9rem; margin: 0;">Henrique & Juliano acabaram de lançar um novo álbum.</p>
+                    <div class="setting-item notif-item" style="border-bottom: 1px solid #333; padding: 15px 0; display: flex; align-items: center; gap: 15px;">
+                        <img src="./img/artista-henrique-juliano.jpg" alt="Lançamento" style="width: 60px; height: 60px; border-radius: 4px; object-fit: cover;">
+                        <div class="setting-info">
+                            <h3 style="margin: 0;" id="notif-item-title">Novos Lançamentos</h3>
+                            <p style="color: #b3b3b3; font-size: 0.9rem; margin: 0;" id="notif-item-desc">Henrique & Juliano acabaram de lançar um novo álbum.</p>
                         </div>
                     </div>
                 </div>
@@ -200,43 +201,96 @@
 
             <section class="content" id="profile-page" style="display: none;">
                 <div style="text-align: center; padding: 40px; background: linear-gradient(to bottom, #282828, #121212); border-radius: 12px;">
-                    
                     <input type="file" id="profile-upload" accept="image/*" style="display: none;">
-                    
                     <div class="profile-pic-wrapper">
                         <img id="profile-pic-display" src="https://ui-avatars.com/api/?name=User&background=1db954&color=fff&size=150">
-                        
                         <div class="profile-pic-overlay">
-                            <span id="change-pic-btn"><i class="fa-solid fa-camera"></i> Alterar</span>
-                            <span id="remove-pic-btn" style="color: #ff4d4d; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-trash"></i> Remover</span>
+                            <span id="change-pic-btn"><i class="fa-solid fa-camera"></i> <span id="txt-change-pic">Alterar</span></span>
+                            <span id="remove-pic-btn" style="color: #ff4d4d; border-top: 1px solid rgba(255,255,255,0.1);"><i class="fa-solid fa-trash"></i> <span id="txt-remove-pic">Remover</span></span>
                         </div>
                     </div>
-
                     <h1 id="profile-page-title" style="margin-top: 20px;">Seu Perfil</h1>
                     <p id="profile-stats" style="color: #b3b3b3;">0 Playlists • 0 Seguidores</p>
                     <button class="nav-playlist-btn-save" id="back-home-profile" style="margin-top: 20px;">Voltar</button>
                 </div>
             </section>
+
+            <section class="content" id="artist-details-page" style="display: none;">
+                <div class="artist-header-actions" style="margin-bottom: 20px;">
+                    <button class="nav-playlist-btn-save" id="back-home-artist" style="background: rgba(0,0,0,0.6); color: white; border: 1px solid #777;">&lt; Voltar</button>
+                </div>
+                
+               <div class="artist-header">
+                    <img id="artist-detail-img" src="" alt="">
+                    <div class="artist-header-info">
+                        
+                        <div class="verified-badge">
+                            <svg class="verified-icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L14.5 3.5L17 3L18.5 5.5L21 6.5L21 9.5L23 12L21 14.5L21 17.5L18.5 18.5L17 21L14.5 20.5L12 22L9.5 20.5L7 21L5.5 18.5L3 17.5L3 14.5L1 12L3 9.5L3 6.5L5.5 5.5L7 3L9.5 3.5L12 2Z" fill="#3D91F4"/>
+                                <path d="M8.5 12L11 14.5L15.5 9.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            <span id="artist-verified-text">Artista Verificado</span>
+                        </div>
+                        <h1 id="artist-detail-name">Nome do Artista</h1>
+                        <p id="artist-detail-stats" style="margin-top: 15px;">3.500.234 ouvintes mensais</p>
+                    </div>
+                </div>
+
+                <div class="artist-songs-section">
+                    <div class="songs-controls">
+                        <button class="play-main-btn" id="play-artist-main-btn"><i class="fa-solid fa-play"></i></button>
+                        <button class="follow-btn" id="artist-follow-btn">Seguir</button>
+                    </div>
+                    <h2 style="margin: 30px 0 20px 0;" id="artist-popular-title">Populares</h2>
+                    <div class="songs-list" id="artist-songs-list">
+                    </div>
+                </div>
+            </section>
+
+            <section class="content" id="album-details-page" style="display: none;">
+                <div class="artist-header-actions" style="margin-bottom: 20px;">
+                    <button class="nav-playlist-btn-save" id="back-home-album" style="background: rgba(0,0,0,0.6); color: white; border: 1px solid #777;">&lt; Voltar</button>
+                </div>
+                
+                <div class="album-header-container">
+                    <img id="album-cover-img" src="" alt="Album Cover">
+                    <div class="album-info-content">
+                        <span class="album-type" id="album-type-label">Álbum</span>
+                        <h1 id="album-title">Nome do Álbum</h1>
+                        <div class="album-meta">
+                            <span id="album-artist-name" style="font-weight: 700;">Artista</span>
+                            <span class="album-bullet">•</span>
+                            <span id="album-year">2024</span>
+                            <span class="album-bullet">•</span>
+                            <span id="album-songs-count">10 músicas,</span>
+                            <span class="album-duration" style="color: #b3b3b3; margin-left: 4px;">35 min 20 s</span>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="album-songs-section">
+                    <div class="album-actions-bar">
+                        <button class="play-main-btn" id="play-album-btn"><i class="fa-solid fa-play"></i></button>
+                        <i class="fa-regular fa-heart action-icon"></i>
+                        <i class="fa-solid fa-arrow-down action-icon"></i>
+                        <i class="fa-solid fa-ellipsis action-icon"></i>
+                    </div>
+            
+                    <div class="tracklist-header">
+                        <div class="th-num">#</div>
+                        <div class="th-title" id="th-title">Título</div>
+                        <div class="th-time"><i class="fa-regular fa-clock"></i></div>
+                    </div>
+            
+                    <hr class="album-divider">
+            
+                    <div class="songs-list" id="album-songs-list">
+                        <!-- Tracks will be generated here -->
+                    </div>
+                </div>
+            </section>
         </main>
     </div>
-
-    <script src="script.js"></script>
-    <script src="./javascript/weather.js"></script>
-    <script>
-        const volumeSlider = document.getElementById('volume-slider');
-
-        function updateVolumeBackground() {
-            if (volumeSlider) {
-                const value = (volumeSlider.value - volumeSlider.min) / (volumeSlider.max - volumeSlider.min) * 100;
-                volumeSlider.style.background = `linear-gradient(to right, #1db954 ${value}%, rgba(255, 255, 255, 0.1) ${value}%)`;
-            }
-        }
-
-        if (volumeSlider) {
-            volumeSlider.addEventListener('input', updateVolumeBackground);
-            updateVolumeBackground();
-        }
-    </script>
 
     <div id="player-bar" class="player-bar-hidden">
         <div style="position: absolute; top: 10px; right: 20px; display: flex; gap: 15px;">
@@ -271,13 +325,7 @@
         </div>
     </div>
 
-    <script>
-        document.getElementById('close-player-btn').addEventListener('click', () => {
-            document.getElementById('player-bar').classList.add('player-bar-hidden');
-            const audio = document.querySelector('audio');
-            if(audio) audio.pause();
-        });
-    </script>
+    <script src="script.js"></script>
+    <script src="./javascript/weather.js"></script>
 </body>
-
 </html>
