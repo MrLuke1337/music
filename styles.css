@@ -1344,3 +1344,59 @@ input:checked + .slider:before {
     max-height: 300px;
     overflow-y: auto;
 }
+
+/* Novos estilos para a seção de adicionar música */
+.add-song-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.add-song-row:hover {
+    background: #2a2a2a;
+}
+
+.btn-add-song {
+    background: transparent;
+    border: 1px solid #727272;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.btn-add-song:hover {
+    border-color: white;
+    transform: scale(1.05);
+}
+
+#btn-delete-playlist:hover {
+    transform: scale(1.1);
+    color: #ff0000;
+}
+
+/* Botão de remover música da playlist */
+.btn-remove-song {
+    color: #b3b3b3;
+    cursor: pointer;
+    margin-left: 15px;
+    font-size: 14px;
+    opacity: 0; /* Escondido por padrão */
+    transition: all 0.2s;
+}
+
+/* Mostra o botão quando passa o mouse na linha da música */
+.song-row:hover .btn-remove-song {
+    opacity: 1;
+}
+
+.btn-remove-song:hover {
+    color: #ff5555; /* Vermelho ao passar o mouse */
+    transform: scale(1.1);
+}
