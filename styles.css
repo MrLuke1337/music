@@ -1345,7 +1345,6 @@ input:checked + .slider:before {
     overflow-y: auto;
 }
 
-/* Novos estilos para a seção de adicionar música */
 .add-song-row {
     display: flex;
     align-items: center;
@@ -1381,22 +1380,21 @@ input:checked + .slider:before {
     color: #ff0000;
 }
 
-/* Botão de remover música da playlist */
+
 .btn-remove-song {
     color: #b3b3b3;
     cursor: pointer;
     margin-left: 15px;
     font-size: 14px;
-    opacity: 0; /* Escondido por padrão */
+    opacity: 0;
     transition: all 0.2s;
 }
 
-/* Mostra o botão quando passa o mouse na linha da música */
 .song-row:hover .btn-remove-song {
     opacity: 1;
 }
 
 .btn-remove-song:hover {
-    color: #ff5555; /* Vermelho ao passar o mouse */
+    color: #ff5555;
     transform: scale(1.1);
 }

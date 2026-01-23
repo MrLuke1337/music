@@ -163,18 +163,15 @@ document.addEventListener("DOMContentLoaded", () => {
         return mockAlbumTracks;
     }
 
-    // Helper function to get all available tracks for search
     function getAllAvailableTracks() {
         let allTracks = [];
         const lang = languageSelect.value;
         
-        // Add artist tracks
         artistsData.forEach(artist => {
             const tracks = getArtistTracks(artist, lang);
             allTracks = [...allTracks, ...tracks];
         });
 
-        // Add album tracks
         albumsData.forEach(album => {
             const tracks = getAlbumTracks(album, lang);
             allTracks = [...allTracks, ...tracks];
@@ -699,7 +696,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Função para adicionar música à playlist atual
     function addSongToCurrentPlaylist(track) {
         if (!currentOpenedPlaylistId) return;
 
@@ -707,21 +703,17 @@ document.addEventListener("DOMContentLoaded", () => {
         const plIndex = playlists.findIndex(pl => pl.id === currentOpenedPlaylistId);
 
         if (plIndex > -1) {
-            // Inicializa array de songs se não existir
             if (!playlists[plIndex].songs) {
                 playlists[plIndex].songs = [];
             }
             
-            // Adiciona a música
             playlists[plIndex].songs.push(track);
             localStorage.setItem('my_custom_playlists', JSON.stringify(playlists));
             
-            // Recarrega a view da playlist
             openPlaylistDetails(playlists[plIndex]);
         }
     }
 
-    // Renderiza as sugestões de música
     function renderRecommendedSongs() {
         const recList = document.getElementById('recommendation-list');
         const searchInput = document.getElementById('playlist-search-add');
@@ -731,14 +723,12 @@ document.addEventListener("DOMContentLoaded", () => {
         
         const allTracks = getAllAvailableTracks();
         
-        // Se houver texto na busca, filtra. Se não, mostra aleatórias.
         const query = searchInput.value.toLowerCase();
         let displayTracks = allTracks;
 
         if (query) {
             displayTracks = allTracks.filter(t => t.name.toLowerCase().includes(query) || (t.artistName && t.artistName.toLowerCase().includes(query)));
         } else {
-            // Mostra apenas 5 para não poluir se estiver vazio
             displayTracks = allTracks.slice(0, 5); 
         }
 
@@ -761,14 +751,12 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Listener para o input de busca de músicas
     const plSearchInput = document.getElementById('playlist-search-add');
     if (plSearchInput) {
         plSearchInput.addEventListener('input', renderRecommendedSongs);
     }
 
     function openPlaylistDetails(playlist) {
-    // Atualiza a playlist puxando do localStorage para garantir dados frescos
     const savedPlaylists = JSON.parse(localStorage.getItem('my_custom_playlists')) || [];
     const updatedPlaylist = savedPlaylists.find(p => p.id === playlist.id) || playlist;
 
@@ -784,7 +772,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const songsList = document.getElementById('playlist-songs-list');
     const songCountEl = document.getElementById('playlist-detail-stats');
 
-    // Verifica se tem músicas
     if (updatedPlaylist.songs && updatedPlaylist.songs.length > 0) {
         songsList.innerHTML = '';
         songCountEl.innerText = `${updatedPlaylist.songs.length} músicas`;
@@ -891,7 +878,6 @@ function renderSavedPlaylists() {
     }
 }
 
-// Event Listeners (Coloque estes fora de funções, no escopo principal do DOMContentLoaded)
 const btnDeletePl = document.getElementById('btn-delete-playlist');
 if (btnDeletePl) {
     btnDeletePl.addEventListener('click', () => {
@@ -940,7 +926,6 @@ if (btnSave) {
     });
 }
 
-// Inicialização Final
 renderSavedPlaylists();
 loadSettings();
 loadProfileImage();
