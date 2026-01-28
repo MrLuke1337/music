@@ -264,11 +264,21 @@ main {
 }
 
 .search-bar input {
-    background: transparent;
+    background-color: rgba(255, 255, 255, 0);
     border: none;
-    color: white;
+    color: rgb(12, 201, 6);
     outline: none;
     width: 100%;
+}
+
+.search-bar input:-webkit-autofill,
+.search-bar input:-webkit-autofill:hover, 
+.search-bar input:-webkit-autofill:focus, 
+.search-bar input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px #242424 inset !important;
+    -webkit-text-fill-color: white !important;
+    transition: background-color 5000s ease-in-out 0s;
+    caret-color: white;
 }
 
 .user-controls {
@@ -421,13 +431,11 @@ main {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     visibility: visible;
-    /* Importante para o Canvas se comportar como fundo */
     overflow: hidden;
 }
 
-/* Estilo do Visualizador de Áudio (Agora Spectrum Pequeno) */
 #audio-visualizer {
-    width: 120px; /* Aumentado um pouco para visibilidade */
+    width: 120px;
     height: 40px;
     margin-left: 15px;
     opacity: 1;
@@ -435,7 +443,6 @@ main {
     z-index: 1;
 }
 
-/* Garante que os elementos do player fiquem acima do visualizer */
 .player-content-info, .player-controls, .player-volume-container {
     z-index: 5;
     position: relative;
@@ -1414,4 +1421,39 @@ input:checked + .slider:before {
 .btn-remove-song:hover {
     color: #ff5555;
     transform: scale(1.1);
+}
+
+.ai-suggestions-container {
+    background: linear-gradient(135deg, rgba(29, 185, 84, 0.1), rgba(18, 18, 18, 0.8));
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    border-left: 4px solid #1db954;
+    animation: fadeIn 0.5s ease-in-out;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+.ai-suggestion {
+    margin-bottom: 10px;
+}
+
+.ai-suggestion h4 {
+    font-size: 16px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.ai-loading {
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
 }

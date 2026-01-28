@@ -49,6 +49,7 @@
                 <form id="wf-search-form">
                     <i class="fa-solid fa-location-dot"></i>
                     <input type="search" id="wf-city-input" placeholder="Buscar cidade">
+                    <i id="wf-clear-btn" class="fa-solid fa-xmark" style="display: none;"></i>
                     <button type="submit"><i class="fa-solid fa-magnifying-glass"></i></button>
                 </form>
                 <div id="wf-weather-result">
@@ -118,7 +119,7 @@
 
                 <header class="search-bar">
                     <i class="fa-solid fa-magnifying-glass"></i>
-                    <input id="main-search-input" placeholder="O que você quer ouvir?">
+                    <input id="main-search-input" placeholder="O que você quer ouvir?" autocomplete="off">
                 </header>
 
                 <div class="user-controls">
@@ -389,7 +390,6 @@
         </main>
     </div>
 
-    <!-- Barra do Player com Canvas de Visualização -->
     <div id="player-bar" class="player-bar-hidden">
         
         <div style="position: absolute; top: 10px; right: 20px; display: flex; gap: 15px; z-index: 10;">
@@ -416,7 +416,6 @@
                 <input type="range" id="progress-slider" min="0" max="100" value="0">
                 <span id="total-duration">0:00</span>
                 
-                <!-- Canvas aumentado (resolução interna) para melhor qualidade -->
                 <canvas id="audio-visualizer" width="300" height="100"></canvas>
             </div>
         </div>
@@ -426,8 +425,9 @@
             <input type="range" id="volume-slider" min="0" max="1" step="0.01" value="1">
         </div>
     </div>
-
+    
     <script src="script.js"></script>
+    <script type="module" src="./javascript/ai-search.js"></script>
     <script src="./javascript/weather.js"></script>
 </body>
 </html>

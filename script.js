@@ -1,5 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const artistsData = [
+    window.artistsData = [
         { name: "Henrique & Juliano", image: "./img/artista-henrique-juliano.jpg", audio: "./Music/Última Saudade - Ao Vivo_spotdown.org.mp3" },
         { name: "Jorge & Mateus", image: "./img/artista-jorge-mateus.jpg", audio: "./Music/Logo Eu_spotdown.org.mp3" },
         { name: "Zé Neto & Cristiano", image: "./img/artista-ze-neto.jpg", audio: "./Music/Notificação Preferida - Ao Vivo_spotdown.org.mp3" },
@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", () => {
         { name: "Matheus & Kauan", image: "./img/artista-mateus-kauan.jpg", audio: "./Music/Vou Ter Que Superar - Ao Vivo_spotdown.org.mp3" },
     ];
 
-    const albumsData = [
+    window.albumsData = [
         { name: "White Noise", artists: "Sleepy john", year: "2023", image: "./img/album-white-noise.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
         { name: "O céu explica Tudo", artists: "Henrique & Juliano", year: "2017", image: "./img/album-ceu-explica.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
         { name: "Nada como um dia...", artists: "Racionais", year: "2002", image: "./img/album-vida-loka.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
@@ -17,8 +17,11 @@ document.addEventListener("DOMContentLoaded", () => {
         { name: "Escândalo íntimo", artists: "Luisa Sonza", year: "2023", image: "./img/album-escandalo.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" },
     ];
 
+    const artistsData = window.artistsData;
+    const albumsData = window.albumsData;
+
     let currentAudio = new Audio();
-    // Critical for Web Audio API to work with external/server files
+   
     currentAudio.crossOrigin = "anonymous"; 
 
     let isPlaying = false;
@@ -28,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentlyPlayingRow = null; 
     let currentOpenedPlaylistId = null;
 
-    // --- Web Audio API Variáveis ---
     let audioContext;
     let analyser;
     let audioSource;
@@ -69,33 +71,22 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
-    // --- Lógica do Visualizador de Áudio (Barras de Frequência) ---
-    // Esta função desenha o espectro de áudio usando barras verticais.
     function initVisualizer() {
         if (isVisualizerInit) return;
         
         try {
-            // 1. Cria o contexto de áudio
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
-            // 2. Cria o analisador
             analyser = audioContext.createAnalyser();
             
-            // Suavização para evitar que as barras "pisquem" muito rápido
             analyser.smoothingTimeConstant = 0.8;
 
-            // 3. FFT Size (Fast Fourier Transform).
-            // Define a resolução da análise.
-            // 256 resulta em 128 barras de dados de frequência.
-            // Para visualizadores de barras, valores menores (64, 128, 256) geram barras mais largas e visíveis.
             analyser.fftSize = 128; 
 
-            // Conecta a fonte de áudio
             audioSource = audioContext.createMediaElementSource(currentAudio);
             audioSource.connect(analyser);
             analyser.connect(audioContext.destination);
             
-            // bufferLength é sempre metade do fftSize (ex: 64 barras para fftSize 128)
             const bufferLength = analyser.frequencyBinCount; 
             const dataArray = new Uint8Array(bufferLength);
             
@@ -105,48 +96,29 @@ document.addEventListener("DOMContentLoaded", () => {
             function renderFrame() {
                 requestAnimationFrame(renderFrame);
                 
-                // Limpa o canvas para o próximo frame
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 if(!isPlaying) return;
 
-                // 4. Preenche o array dataArray com os dados de frequência atuais (0 a 255)
-                // O índice 0 representa graves profundos, e o último índice representa agudos extremos.
                 analyser.getByteFrequencyData(dataArray);
 
                 const width = canvas.width;
                 const height = canvas.height;
 
-                // Calcula a largura de cada barra para preencher o canvas
-                // O '+ 2' ajuda a remover espaçamentos indesejados devido a arredondamentos
                 const barWidth = (width / bufferLength) * 1.5; 
                 let barHeight;
                 let x = 0;
 
-                // 5. Criação do Gradiente Vertical (Roxo -> Ciano -> Verde)
-                // Isso dá o visual "neon" moderno.
-                const gradient = ctx.createLinearGradient(0, height, 0, 0); // De baixo para cima
-                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");    // Verde Spotify (Base)
-                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");  // Ciano (Meio)
-                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");    // Roxo (Topo - Picos Altos)
+                const gradient = ctx.createLinearGradient(0, height, 0, 0);
+                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");
+                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");
+                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");
 
                 ctx.fillStyle = gradient;
 
-                // Loop através de cada banda de frequência
                 for (let i = 0; i < bufferLength; i++) {
-                    // Mapeamento: O valor vem de 0 a 255.
-                    // Normalizamos e multiplicamos pela altura do canvas.
-                    // Multiplicamos por um fator (ex: 1.2) para que as barras atinjam o topo mais facilmente.
                     barHeight = (dataArray[i] / 255) * height * 1.2;
-
-                    // Desenha o retângulo (Barra)
-                    // x: Posição horizontal atual
-                    // y: Altura total - altura da barra (pois o canvas desenha de cima para baixo)
-                    // width: Largura calculada - 1 (para dar um pequeno espaçamento visual entre barras)
-                    // height: Altura calculada baseada na intensidade do som
                     ctx.fillRect(x, height - barHeight, barWidth - 2, barHeight);
-
-                    // Avança a posição X para a próxima barra
                     x += barWidth;
                 }
             }
@@ -157,7 +129,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-    // --- Dynamic Title Logic ---
     function updatePageTitle(songName) {
         if (isPlaying && songName) {
             document.title = `Tocando agora: ${songName}`;
@@ -178,7 +149,7 @@ document.addEventListener("DOMContentLoaded", () => {
             langTitle: "Idioma", timeTitle: "Horário", timeSub: "Escolha sua preferência de formato: 12 horas ou 24 horas.",
             audioTitle: "Qualidade do Áudio", audioSub: "Ajuste a fidelidade sonora das faixas.",
             audioOpt: ["Automática", "Baixa", "Normal", "Alta (Recomendado)"],
-            profileStats: "0 Playlists • 0 Seguidores", profileTitle: "Seu Perfil",
+            profileStats: "0 Playlists • 0 Followers", profileTitle: "Seu Perfil",
             changePic: "Alterar", removePic: "Remover",
             legal: "Legal", privacyCenter: "Centro de Privacidade", privacyPolicy: "Política de Privacidade",
             cookies: "Cookies", ads: "Sobre anúncios", accessibility: "Acessibilidade",
@@ -242,8 +213,8 @@ document.addEventListener("DOMContentLoaded", () => {
         return translations[lang] || translations["pt-BR"];
     }
 
-    function getArtistTracks(artist, lang) {
-        const t = getTranslations(lang);
+    window.getArtistTracks = function(artist, lang) {
+        const t = getTranslations(lang || 'pt-BR');
         return [
             {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackSuccess}`, plays: "350.234.111", audio: artist.audio},
             {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackLive}`, plays: "120.500.222", audio: artist.audio},
@@ -251,10 +222,10 @@ document.addEventListener("DOMContentLoaded", () => {
             {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackRemix}`, plays: "45.200.000", audio: artist.audio},
             {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackFeat}`, plays: "12.854.123", audio: artist.audio}
         ];
-    }
+    };
 
-    function getAlbumTracks(album, lang) {
-         const t = getTranslations(lang);
+    window.getAlbumTracks = function(album, lang) {
+         const t = getTranslations(lang || 'pt-BR');
          const trackCount = 10;
          const mockAlbumTracks = [];
          for(let i = 0; i < trackCount; i++) {
@@ -267,6 +238,18 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         }
         return mockAlbumTracks;
+    };
+    
+    window.playTrack = function(index, playlist, rowElement) {
+        playTrack(index, playlist, rowElement);
+    }
+    
+    window.openArtistDetails = function(artist) {
+        openArtistDetails(artist);
+    }
+    
+    window.openAlbumDetails = function(album) {
+        openAlbumDetails(album);
     }
 
     function getAllAvailableTracks() {
@@ -274,12 +257,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const lang = languageSelect.value;
         
         artistsData.forEach(artist => {
-            const tracks = getArtistTracks(artist, lang);
+            const tracks = window.getArtistTracks(artist, lang);
             allTracks = [...allTracks, ...tracks];
         });
 
         albumsData.forEach(album => {
-            const tracks = getAlbumTracks(album, lang);
+            const tracks = window.getAlbumTracks(album, lang);
             allTracks = [...allTracks, ...tracks];
         });
         
@@ -324,8 +307,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function playTrack(index, playlist, rowElement = null) {
-        // Inicializa o Visualizador na primeira interação do usuário.
-        // Isso é necessário porque navegadores bloqueiam AudioContext até que o usuário interaja com a página.
         if (!isVisualizerInit) {
             initVisualizer();
             if(audioContext && audioContext.state === 'suspended') {
@@ -352,7 +333,6 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             currentAudio.src = track.audio;
-            // Tenta dar play. Se falhar (ex: bloqueio de autoplay), loga o erro mas não quebra a app.
             currentAudio.play().catch(e => console.log("Erro no autoplay (esperado sem interação):", e));
             isPlaying = true;
 
@@ -389,7 +369,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
-    // Pause Event for Title
     currentAudio.addEventListener('pause', () => {
          updatePageTitle(null);
     });
@@ -445,12 +424,11 @@ document.addEventListener("DOMContentLoaded", () => {
         [mainSection, settingsSection, notifPage, profilePage, artistDetailsPage, albumDetailsPage, createPlaylistPage, playlistDetailsPage].forEach(s => {
             if(s) {
                 s.style.display = 'none';
-                s.classList.remove('fade-in'); // Reset animation
+                s.classList.remove('fade-in');
             }
         });
         
         section.style.display = 'block';
-        // Force reflow for animation restart
         void section.offsetWidth; 
         section.classList.add('fade-in');
         
@@ -513,7 +491,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const songsList = document.getElementById('artist-songs-list');
         songsList.innerHTML = ''; 
 
-        const mockTracks = getArtistTracks(artist, lang);
+        const mockTracks = window.getArtistTracks(artist, lang);
 
         mockTracks.forEach((track, i) => {
             const row = document.createElement('div');
@@ -561,7 +539,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const songsList = document.getElementById('album-songs-list');
         songsList.innerHTML = '';
 
-        const mockAlbumTracks = getAlbumTracks(album, lang);
+        const mockAlbumTracks = window.getAlbumTracks(album, lang);
         document.getElementById('album-songs-count').innerText = `${mockAlbumTracks.length} ${t.albumSongs},`;
 
         mockAlbumTracks.forEach((track, i) => {
@@ -614,7 +592,7 @@ document.addEventListener("DOMContentLoaded", () => {
         artistCard.addEventListener('click', () => openArtistDetails(artist));
         artistCard.querySelector('.play-button').addEventListener('click', (e) => {
             e.stopPropagation();
-            const tracks = getArtistTracks(artist, languageSelect.value);
+            const tracks = window.getArtistTracks(artist, languageSelect.value);
             playTrack(0, tracks, null);
         });
         artistGrid.appendChild(artistCard);
@@ -633,7 +611,7 @@ document.addEventListener("DOMContentLoaded", () => {
         albumCard.addEventListener('click', () => openAlbumDetails(album));
         albumCard.querySelector('.play-button').addEventListener('click', (e) => {
             e.stopPropagation();
-            const tracks = getAlbumTracks(album, languageSelect.value);
+            const tracks = window.getAlbumTracks(album, languageSelect.value);
             playTrack(0, tracks, null);
         });
         albumsGrid.appendChild(albumCard);
