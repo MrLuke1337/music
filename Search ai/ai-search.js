@@ -1,18 +1,28 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// Recupera a chave de API do ambiente (process.env.API_KEY)
-const getApiKey = () => {
-    try {
-        if (typeof process !== "undefined" && process.env && process.env.API_KEY) {
-            return process.env.API_KEY;
-        }
-    } catch (e) {
-        // Ignora erro de referência se process não estiver definido
-    }
-    return null;
-};
+// ==========================================
+// ⚠️ CONFIGURAÇÃO PARA GITHUB PAGES ⚠️
+// Como o GitHub Pages é estático, não tem variáveis de ambiente (.env).
+// Para a IA funcionar online, cole sua API Key do Gemini abaixo entre as aspas.
+const MANUAL_KEY_FOR_GITHUB_PAGES = "AIzaSyBQnyBTcgRZQxlvo8LD9FK-WsPw3IzRQy4"; 
+// ==========================================
 
-const API_KEY = getApiKey();
+// Polyfill robusto para garantir que process.env.API_KEY exista no navegador
+if (typeof window !== "undefined") {
+    if (typeof window.process === "undefined") {
+        window.process = { env: {} };
+    }
+    if (!window.process.env) {
+        window.process.env = {};
+    }
+    // Se não houver chave no env (build), usa a manual
+    if (!window.process.env.API_KEY && MANUAL_KEY_FOR_GITHUB_PAGES) {
+        window.process.env.API_KEY = MANUAL_KEY_FOR_GITHUB_PAGES;
+    }
+}
+
+// Chave final
+const API_KEY = typeof process !== "undefined" && process.env ? process.env.API_KEY : null;
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById('main-search-input');
@@ -25,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const albumsTitle = document.getElementById('title-albums');
     const songsTitle = document.getElementById('title-songs');
 
-    // Inicializa IA se a chave existir
+    // Inicializa IA
     let ai = null;
     if (API_KEY) {
         try {
@@ -35,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
             console.error("Erro ao configurar IA:", error);
         }
     } else {
-        console.warn("⚠️ Chave da API não encontrada. A busca funcionará apenas no modo local.");
+        console.warn("⚠️ API Key não detectada. Adicione-a na variável MANUAL_KEY_FOR_GITHUB_PAGES em javascript/ai-search.js para a IA funcionar.");
     }
 
     // Configuração do Botão Limpar (X)
@@ -45,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
         clearBtn.className = 'fa-solid fa-xmark clear-search-btn';
         if (searchInput.parentElement) {
             searchInput.parentElement.appendChild(clearBtn);
-            // CSS deve posicionar isso absolute dentro do pai relative
         }
 
         clearBtn.addEventListener('click', () => {
@@ -85,27 +94,30 @@ document.addEventListener("DOMContentLoaded", () => {
         const allAlbums = window.albumsData || [];
         const allTracks = getAllTracks();
 
-        // Contexto simplificado
+        // Contexto simplificado para economizar tokens
         const context = {
             artists: allArtists.map(a => a.name),
             albums: allAlbums.map(a => a.name),
-            songs_sample: allTracks.slice(0, 30).map(t => t.name) // Amostra menor
+            songs_sample: allTracks.slice(0, 50).map(t => t.name) 
         };
 
         try {
             const response = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: `
-                Você é o motor de busca do Spotify Clone.
-                CONTEXTO DE DADOS: ${JSON.stringify(context)}
-                USUÁRIO BUSCOU: "${query}"
+                Você é o motor de busca inteligente do Spotify.
+                
+                CONTEXTO DE DADOS DO APP:
+                ${JSON.stringify(context)}
+                
+                O USUÁRIO BUSCOU: "${query}"
                 
                 Instruções:
-                1. Identifique se a busca corresponde a Artistas, Álbuns ou Músicas da lista.
-                2. Seja tolerante com erros de digitação (ex: "Jorje" -> "Jorge & Mateus").
-                3. Retorne arrays de strings com os NOMES EXATOS encontrados no contexto.
-                4. Crie uma mensagem curta e divertida sobre a busca.
-                5. Gere 2 tags de gênero musical relacionadas.
+                1. Analise a busca e encontre correspondências em Artistas, Álbuns e Músicas.
+                2. Corrija erros de digitação (ex: "Jorje" -> "Jorge & Mateus").
+                3. Retorne arrays de strings contendo APENAS os nomes exatos encontrados no contexto.
+                4. Se a busca for genérica (ex: "Sertanejo"), encontre itens desse gênero.
+                5. Crie uma mensagem curta (max 100 caracteres) e divertida sobre o resultado.
                 `,
                 config: {
                     responseMimeType: "application/json",
@@ -127,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error("Erro na busca IA:", error);
+            // Em caso de erro (ex: cota excedida), retorna null para usar fallback local
             return null;
         }
         return null;
@@ -143,8 +156,8 @@ document.addEventListener("DOMContentLoaded", () => {
             artists: allArtists.filter(a => a.name.toLowerCase().includes(lowerQ)),
             albums: allAlbums.filter(a => a.name.toLowerCase().includes(lowerQ)),
             songs: allTracks.filter(t => t.name.toLowerCase().includes(lowerQ)),
-            message: null,
-            tags: []
+            message: "Resultados locais (IA indisponível)",
+            tags: ["Busca Local"]
         };
     }
 
@@ -180,21 +193,25 @@ document.addEventListener("DOMContentLoaded", () => {
                 results.songs = allTracks.filter(t => aiResponse.matched_songs.includes(t.name));
                 results.message = aiResponse.ai_message;
                 results.tags = aiResponse.tags;
-                usedAI = true;
+                
+                // Se a IA retornou tudo vazio, marca como não usada para tentar o fallback amplo
+                if (results.artists.length > 0 || results.albums.length > 0 || results.songs.length > 0) {
+                    usedAI = true;
+                }
             }
         }
 
         // 2. Fallback ou Complemento Local
-        // Se a IA não retornou nada relevante ou não está ativa, fazemos a busca exata
-        if (!usedAI || (results.artists.length === 0 && results.albums.length === 0 && results.songs.length === 0)) {
+        if (!usedAI) {
             const localResults = localSearch(query);
-            // Só sobrescreve se a IA não achou nada
-            if (results.artists.length === 0) results.artists = localResults.artists;
-            if (results.albums.length === 0) results.albums = localResults.albums;
-            if (results.songs.length === 0) results.songs = localResults.songs;
+            results.artists = localResults.artists;
+            results.albums = localResults.albums;
+            results.songs = localResults.songs;
             
-            if (!results.message) {
-                 results.message = `Resultados para "${query}"`;
+            if (!ai) {
+                 results.message = "Mostrando resultados locais (Adicione sua API Key).";
+            } else {
+                 results.message = `Resultados diretos para "${query}"`;
             }
         }
 
@@ -218,7 +235,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const suggestionBox = document.createElement('div');
             suggestionBox.className = 'ai-suggestion-box fade-in';
             
-            const isAI = !!ai && (data.tags && data.tags.length > 0);
+            // Verifica se foi realmente IA (tem tags geradas)
+            const isAI = !!ai && (data.tags && data.tags.length > 0 && !data.tags.includes("Busca Local"));
             
             suggestionBox.innerHTML = `
                 <div class="ai-header">
@@ -234,8 +252,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if(mainContent) mainContent.insertBefore(suggestionBox, mainContent.firstChild);
         }
 
+        let hasResults = false;
+
         // 2. Músicas
         if (data.songs.length > 0) {
+            hasResults = true;
             if(songsTitle) songsTitle.style.display = 'block';
             if(songsTitle) songsTitle.textContent = "Músicas";
             if(songsGrid) {
@@ -250,6 +271,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 3. Artistas
         if (data.artists.length > 0) {
+            hasResults = true;
             if(artistsTitle) artistsTitle.style.display = 'block';
             if(artistsTitle) artistsTitle.textContent = "Artistas";
             if(artistsGrid) {
@@ -264,6 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 4. Álbuns
         if (data.albums.length > 0) {
+            hasResults = true;
             if(albumsTitle) albumsTitle.style.display = 'block';
             if(albumsTitle) albumsTitle.textContent = "Álbuns";
             if(albumsGrid) {
@@ -277,7 +300,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Caso vazio
-        if (data.artists.length === 0 && data.albums.length === 0 && data.songs.length === 0) {
+        if (!hasResults) {
             if(artistsGrid) {
                 artistsGrid.innerHTML = '<p style="color: #b3b3b3; grid-column: 1/-1; padding: 20px;">Nenhum resultado encontrado. Tente buscar por artista, música ou álbum.</p>';
             }
@@ -363,7 +386,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loader.className = 'ai-search-loader';
         loader.innerHTML = `
             <div class="spinner"></div>
-            <span>Buscando...</span>
+            <span>Buscando com IA...</span>
         `;
         
         const mainContent = document.getElementById('main-content');
@@ -391,7 +414,7 @@ document.addEventListener("DOMContentLoaded", () => {
             // Delay para evitar muitas requisições
             timeout = setTimeout(() => {
                 performSearch(val);
-            }, 500); 
+            }, 600); 
         });
 
         searchInput.addEventListener('keydown', (e) => {

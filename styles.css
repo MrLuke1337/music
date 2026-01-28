@@ -1449,28 +1449,112 @@ input:checked + .slider:before {
 
 /* === AI SEARCH STYLES === */
 .ai-suggestion-box {
-    background: linear-gradient(135deg, #16ff0141, #121212);
-    border: 1px solid #333;
-    border-left: 4px solid #08e61393;
-    border-radius: 8px;
-    padding: 16px 20px;
+    position: relative;
+    /* Um fundo profundo com um brilho radial sutil no canto superior esquerdo */
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(29, 185, 84, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.05) 0%, #121212 100%);
+    background-color: #0a0a0a;
+    
+    /* Borda ultra fina e translúcida */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.12); /* Luz de topo */
+    border-left: 3px solid #1db954; /* Mantendo sua identidade original */
+    
+    border-radius: 16px;
+    padding: 24px 28px;
     margin-bottom: 24px;
-    animation: fadeIn 0.4s ease;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    
+    /* Sombra de alta qualidade (suave e espalhada) */
+    box-shadow: 
+        0 4px 24px -1px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.4); /* Anel escuro para definição */
+        
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.ai-suggestion-box:hover {
+    box-shadow: 
+        0 15px 35px -5px rgba(29, 185, 84, 0.15),
+        0 0 0 1px rgba(29, 185, 84, 0.3);
+    transform: translateY(-2px);
 }
 
 .ai-header {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
-    font-size: 14px;
-    font-weight: 700;
-    color: #1db954;
+    gap: 12px;
+    margin-bottom: 16px;
+    
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
     text-transform: uppercase;
-    letter-spacing: 0.5px;
+    
+    /* O texto brilha */
+    color: transparent;
+    background: linear-gradient(90deg, #1db954, #8effc1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* Adiciona um pequeno glow no texto */
+    text-shadow: 0 0 20px rgba(29, 185, 84, 0.4);
+}.ai-suggestion-box {
+    position: relative;
+    /* Um fundo profundo com um brilho radial sutil no canto superior esquerdo */
+    background: 
+        radial-gradient(circle at 0% 0%, rgba(29, 185, 84, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.05) 0%, #121212 100%);
+    background-color: #0a0a0a;
+    
+    /* Borda ultra fina e translúcida */
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-top: 1px solid rgba(255, 255, 255, 0.12); /* Luz de topo */
+    border-left: 3px solid #1db954; /* Mantendo sua identidade original */
+    
+    border-radius: 16px;
+    padding: 24px 28px;
+    margin-bottom: 24px;
+    
+    /* Sombra de alta qualidade (suave e espalhada) */
+    box-shadow: 
+        0 4px 24px -1px rgba(0, 0, 0, 0.2),
+        0 0 0 1px rgba(0, 0, 0, 0.4); /* Anel escuro para definição */
+        
+    overflow: hidden;
+    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
+.ai-suggestion-box:hover {
+    box-shadow: 
+        0 15px 35px -5px rgba(29, 185, 84, 0.15),
+        0 0 0 1px rgba(29, 185, 84, 0.3);
+    transform: translateY(-2px);
+}
+
+.ai-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    
+    /* O texto brilha */
+    color: transparent;
+    background: linear-gradient(90deg, #1db954, #8effc1);
+    -webkit-background-clip: text;
+    background-clip: text;
+    
+    /* Adiciona um pequeno glow no texto */
+    text-shadow: 0 0 20px rgba(29, 185, 84, 0.4);
+}
 .ai-suggestion-box p {
     font-size: 15px;
     color: #e0e0e0;
