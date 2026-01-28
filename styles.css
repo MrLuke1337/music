@@ -421,6 +421,24 @@ main {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     visibility: visible;
+    /* Importante para o Canvas se comportar como fundo */
+    overflow: hidden;
+}
+
+/* Estilo do Visualizador de Áudio (Agora Spectrum Pequeno) */
+#audio-visualizer {
+    width: 120px; /* Aumentado um pouco para visibilidade */
+    height: 40px;
+    margin-left: 15px;
+    opacity: 1;
+    position: relative;
+    z-index: 1;
+}
+
+/* Garante que os elementos do player fiquem acima do visualizer */
+.player-content-info, .player-controls, .player-volume-container {
+    z-index: 5;
+    position: relative;
 }
 
 .player-bar-hidden {
@@ -1131,7 +1149,6 @@ input:checked + .slider:before {
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
-    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 

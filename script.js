@@ -18,12 +18,21 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     let currentAudio = new Audio();
+    // Critical for Web Audio API to work with external/server files
+    currentAudio.crossOrigin = "anonymous"; 
+
     let isPlaying = false;
     let currentPlaylist = [];
     let currentTrackIndex = 0;
     let lastVolume = 1;
     let currentlyPlayingRow = null; 
     let currentOpenedPlaylistId = null;
+
+    // --- Web Audio API Variáveis ---
+    let audioContext;
+    let analyser;
+    let audioSource;
+    let isVisualizerInit = false;
 
     const mainPlayIcon = document.getElementById('main-play-icon');
     const playerBar = document.getElementById('player-bar');
@@ -58,6 +67,103 @@ document.addEventListener("DOMContentLoaded", () => {
         const min = Math.floor(seconds / 60);
         const sec = Math.floor(seconds % 60);
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    }
+
+    // --- Lógica do Visualizador de Áudio (Barras de Frequência) ---
+    // Esta função desenha o espectro de áudio usando barras verticais.
+    function initVisualizer() {
+        if (isVisualizerInit) return;
+        
+        try {
+            // 1. Cria o contexto de áudio
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            
+            // 2. Cria o analisador
+            analyser = audioContext.createAnalyser();
+            
+            // Suavização para evitar que as barras "pisquem" muito rápido
+            analyser.smoothingTimeConstant = 0.8;
+
+            // 3. FFT Size (Fast Fourier Transform).
+            // Define a resolução da análise.
+            // 256 resulta em 128 barras de dados de frequência.
+            // Para visualizadores de barras, valores menores (64, 128, 256) geram barras mais largas e visíveis.
+            analyser.fftSize = 128; 
+
+            // Conecta a fonte de áudio
+            audioSource = audioContext.createMediaElementSource(currentAudio);
+            audioSource.connect(analyser);
+            analyser.connect(audioContext.destination);
+            
+            // bufferLength é sempre metade do fftSize (ex: 64 barras para fftSize 128)
+            const bufferLength = analyser.frequencyBinCount; 
+            const dataArray = new Uint8Array(bufferLength);
+            
+            const canvas = document.getElementById("audio-visualizer");
+            const ctx = canvas.getContext("2d");
+            
+            function renderFrame() {
+                requestAnimationFrame(renderFrame);
+                
+                // Limpa o canvas para o próximo frame
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                if(!isPlaying) return;
+
+                // 4. Preenche o array dataArray com os dados de frequência atuais (0 a 255)
+                // O índice 0 representa graves profundos, e o último índice representa agudos extremos.
+                analyser.getByteFrequencyData(dataArray);
+
+                const width = canvas.width;
+                const height = canvas.height;
+
+                // Calcula a largura de cada barra para preencher o canvas
+                // O '+ 2' ajuda a remover espaçamentos indesejados devido a arredondamentos
+                const barWidth = (width / bufferLength) * 1.5; 
+                let barHeight;
+                let x = 0;
+
+                // 5. Criação do Gradiente Vertical (Roxo -> Ciano -> Verde)
+                // Isso dá o visual "neon" moderno.
+                const gradient = ctx.createLinearGradient(0, height, 0, 0); // De baixo para cima
+                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");    // Verde Spotify (Base)
+                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");  // Ciano (Meio)
+                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");    // Roxo (Topo - Picos Altos)
+
+                ctx.fillStyle = gradient;
+
+                // Loop através de cada banda de frequência
+                for (let i = 0; i < bufferLength; i++) {
+                    // Mapeamento: O valor vem de 0 a 255.
+                    // Normalizamos e multiplicamos pela altura do canvas.
+                    // Multiplicamos por um fator (ex: 1.2) para que as barras atinjam o topo mais facilmente.
+                    barHeight = (dataArray[i] / 255) * height * 1.2;
+
+                    // Desenha o retângulo (Barra)
+                    // x: Posição horizontal atual
+                    // y: Altura total - altura da barra (pois o canvas desenha de cima para baixo)
+                    // width: Largura calculada - 1 (para dar um pequeno espaçamento visual entre barras)
+                    // height: Altura calculada baseada na intensidade do som
+                    ctx.fillRect(x, height - barHeight, barWidth - 2, barHeight);
+
+                    // Avança a posição X para a próxima barra
+                    x += barWidth;
+                }
+            }
+            renderFrame();
+            isVisualizerInit = true;
+        } catch (e) {
+            console.error("Falha ao inicializar AudioContext:", e);
+        }
+    }
+
+    // --- Dynamic Title Logic ---
+    function updatePageTitle(songName) {
+        if (isPlaying && songName) {
+            document.title = `Tocando agora: ${songName}`;
+        } else {
+            document.title = "Spotify – Web player";
+        }
     }
 
     const translations = {
@@ -218,6 +324,15 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function playTrack(index, playlist, rowElement = null) {
+        // Inicializa o Visualizador na primeira interação do usuário.
+        // Isso é necessário porque navegadores bloqueiam AudioContext até que o usuário interaja com a página.
+        if (!isVisualizerInit) {
+            initVisualizer();
+            if(audioContext && audioContext.state === 'suspended') {
+                audioContext.resume();
+            }
+        }
+
         if (playlist) {
             currentPlaylist = playlist;
         }
@@ -237,7 +352,8 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             currentAudio.src = track.audio;
-            currentAudio.play();
+            // Tenta dar play. Se falhar (ex: bloqueio de autoplay), loga o erro mas não quebra a app.
+            currentAudio.play().catch(e => console.log("Erro no autoplay (esperado sem interação):", e));
             isPlaying = true;
 
             playerTitle.innerText = track.name;
@@ -248,6 +364,7 @@ document.addEventListener("DOMContentLoaded", () => {
             playerBar.classList.remove('player-bar-minimized');
         }
 
+        updatePageTitle(isPlaying ? track.name : null);
         mainPlayIcon.className = isPlaying ? 'fa-solid fa-circle-pause' : 'fa-solid fa-circle-play';
         updateRowUI();
     }
@@ -270,6 +387,11 @@ document.addEventListener("DOMContentLoaded", () => {
             currentTimeEl.innerText = formatTime(currentAudio.currentTime);
             totalDurationEl.innerText = formatTime(currentAudio.duration);
         }
+    });
+    
+    // Pause Event for Title
+    currentAudio.addEventListener('pause', () => {
+         updatePageTitle(null);
     });
 
     progressSlider.addEventListener('input', () => {
@@ -321,9 +443,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function showOnly(section) {
         [mainSection, settingsSection, notifPage, profilePage, artistDetailsPage, albumDetailsPage, createPlaylistPage, playlistDetailsPage].forEach(s => {
-            if(s) s.style.display = 'none';
+            if(s) {
+                s.style.display = 'none';
+                s.classList.remove('fade-in'); // Reset animation
+            }
         });
+        
         section.style.display = 'block';
+        // Force reflow for animation restart
+        void section.offsetWidth; 
+        section.classList.add('fade-in');
+        
         setTimeout(updateRowUI, 50); 
     }
 

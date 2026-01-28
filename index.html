@@ -389,8 +389,10 @@
         </main>
     </div>
 
+    <!-- Barra do Player com Canvas de Visualização -->
     <div id="player-bar" class="player-bar-hidden">
-        <div style="position: absolute; top: 10px; right: 20px; display: flex; gap: 15px;">
+        
+        <div style="position: absolute; top: 10px; right: 20px; display: flex; gap: 15px; z-index: 10;">
             <i class="fa-solid fa-angle-down" id="minimize-btn" style="cursor: pointer;"></i>
             <i class="fa-solid fa-xmark" id="close-player-btn" style="cursor: pointer; font-size: 20px; color: #b3b3b3;"></i>
         </div>
@@ -413,6 +415,9 @@
                 <span id="current-time">0:00</span>
                 <input type="range" id="progress-slider" min="0" max="100" value="0">
                 <span id="total-duration">0:00</span>
+                
+                <!-- Canvas aumentado (resolução interna) para melhor qualidade -->
+                <canvas id="audio-visualizer" width="300" height="100"></canvas>
             </div>
         </div>
 
