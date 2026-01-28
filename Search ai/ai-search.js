@@ -4,7 +4,7 @@ import { GoogleGenAI, Type } from "@google/genai";
 // ⚠️ CONFIGURAÇÃO PARA GITHUB PAGES ⚠️
 // Como o GitHub Pages é estático, não tem variáveis de ambiente (.env).
 // Para a IA funcionar online, cole sua API Key do Gemini abaixo entre as aspas.
-const MANUAL_KEY_FOR_GITHUB_PAGES = "AIzaSyBQnyBTcgRZQxlvo8LD9FK-WsPw3IzRQy4"; 
+const MANUAL_KEY_FOR_GITHUB_PAGES = ""; 
 // ==========================================
 
 // Polyfill robusto para garantir que process.env.API_KEY exista no navegador
@@ -424,4 +424,5 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
 });
