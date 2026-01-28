@@ -1,27 +1,146 @@
+// Define data in global scope immediately so it's available for other modules
+window.artistsData = [
+    { name: "Henrique & Juliano", image: "./img/artista-henrique-juliano.jpg", audio: "./Music/Última Saudade - Ao Vivo_spotdown.org.mp3" },
+    { name: "Jorge & Mateus", image: "./img/artista-jorge-mateus.jpg", audio: "./Music/Logo Eu_spotdown.org.mp3" },
+    { name: "Zé Neto & Cristiano", image: "./img/artista-ze-neto.jpg", audio: "./Music/Notificação Preferida - Ao Vivo_spotdown.org.mp3" },
+    { name: "Gusttavo Lima", image: "./img/artista-gustavo-limma.jpg", audio: "./Music/Retrovisor_spotdown.org.mp3" },
+    { name: "Luan Santana", image: "./img/artista-luan-santana.jpg", audio: "./Music/DONA - Ao Vivo_spotdown.org.mp3" },
+    { name: "Matheus & Kauan", image: "./img/artista-mateus-kauan.jpg", audio: "./Music/Vou Ter Que Superar - Ao Vivo_spotdown.org.mp3" },
+];
+
+window.albumsData = [
+    { name: "White Noise", artists: "Sleepy john", year: "2023", image: "./img/album-white-noise.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+    { name: "O céu explica Tudo", artists: "Henrique & Juliano", year: "2017", image: "./img/album-ceu-explica.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
+    { name: "Nada como um dia...", artists: "Racionais", year: "2002", image: "./img/album-vida-loka.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
+    { name: "HIT ME HARD AND SOFT", artists: "Billie Eilish", year: "2024", image: "./img/album-hit-me.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" },
+    { name: "CAJU", artists: "Liniker", year: "2024", image: "./img/album-caju.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
+    { name: "Escândalo íntimo", artists: "Luisa Sonza", year: "2023", image: "./img/album-escandalo.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" },
+];
+
+const translations = {
+    "pt-BR": {
+        home: "Início", library: "Sua Biblioteca", createPl: "Criar playlist ou pasta",
+        artists: "Artistas Populares", albums: "Álbuns Populares", notif: "Novidades",
+        settings: "Configurações", profile: "Perfil", save: "Salvar e Voltar", back: "Voltar",
+        search: "O que você quer ouvir?", weatherSearch: "Buscar cidade",
+        humidity: "Umidade", wind: "Vento", max: "Máx", min: "Mín",
+        plTitle: "Crie sua Primeira Playlist",
+        plSub: "É fácil, vamos te ajudar.", plBtn: "Criar Playlist",
+        langTitle: "Idioma", timeTitle: "Horário", timeSub: "Escolha sua preferência de formato: 12 horas ou 24 horas.",
+        audioTitle: "Qualidade do Áudio", audioSub: "Ajuste a fidelidade sonora das faixas.",
+        audioOpt: ["Automática", "Baixa", "Normal", "Alta (Recomendado)"],
+        profileStats: "0 Playlists • 0 Followers", profileTitle: "Seu Perfil",
+        changePic: "Alterar", removePic: "Remover",
+        legal: "Legal", privacyCenter: "Centro de Privacidade", privacyPolicy: "Política de Privacidade",
+        cookies: "Cookies", ads: "Sobre anúncios", accessibility: "Acessibilidade",
+        notifTitle: "O que há de novo",
+        notifItemTitle: "Novos Lançamentos", notifItemDesc: "Henrique & Juliano acabaram de lançar um novo álbum.",
+        artistVerified: "Artista Verificado", artistFollow: "Seguir", artistPopular: "Populares",
+        trackSuccess: "Sucesso 1", trackLive: "Ao Vivo", trackAcoustic: "Acústico", trackRemix: "Remix", trackFeat: "Ft. Convidado",
+        albumType: "Álbum", albumSongs: "músicas", albumTrackPrefix: "Faixa do Álbum", thTitle: "Título",
+        cpLabel: "Playlist", cpMainTitle: "Minha Playlist nº 1", lblPlName: "Nome", lblPlDesc: "Descrição",
+        btnSave: "Salvar", btnCancel: "Cancelar", plNamePlaceholder: "Adicione um nome", plDescPlaceholder: "Adicione uma descrição opcional"
+    },
+    "en-US": {
+        home: "Home", library: "Your Library", createPl: "Create playlist or folder",
+        artists: "Popular Artists", albums: "Popular Albums", notif: "What's New",
+        settings: "Settings", profile: "Profile", save: "Save and Back", back: "Back",
+        search: "What do you want to listen to?", weatherSearch: "Search city",
+        humidity: "Humidity", wind: "Wind", max: "Max", min: "Min",
+        plTitle: "Create your first playlist",
+        plSub: "It's easy, we'll help you.", plBtn: "Create Playlist",
+        langTitle: "Language", timeTitle: "Time Format", timeSub: "Choose your preference: 12-hour or 24-hour.",
+        audioTitle: "Audio Quality", audioSub: "Adjust the sound fidelity of the tracks.",
+        audioOpt: ["Automatic", "Low", "Normal", "High (Recommended)"],
+        profileStats: "0 Playlists • 0 Followers", profileTitle: "Your Profile",
+        changePic: "Change", removePic: "Remove",
+        legal: "Legal", privacyCenter: "Privacy Center", privacyPolicy: "Privacy Policy",
+        cookies: "Cookies", ads: "About Ads", accessibility: "Accessibility",
+        notifTitle: "What's new",
+        notifItemTitle: "New Releases", notifItemDesc: "Henrique & Juliano just released a new album.",
+        artistVerified: "Verified Artist", artistFollow: "Follow", artistPopular: "Popular",
+        trackSuccess: "Hit 1", trackLive: "Live", trackAcoustic: "Acoustic", trackRemix: "Remix", trackFeat: "Feat. Guest",
+        albumType: "Album", albumSongs: "songs", albumTrackPrefix: "Album Track", thTitle: "Title",
+        cpLabel: "Playlist", cpMainTitle: "My Playlist #1", lblPlName: "Name", lblPlDesc: "Description",
+        btnSave: "Save", btnCancel: "Cancel", plNamePlaceholder: "Add a name", plDescPlaceholder: "Add an optional description"
+    },
+    "es-ES": {
+        home: "Inicio", library: "Tu Biblioteca", createPl: "Crear lista o carpeta",
+        artists: "Artistas Populares", albums: "Álbumes Populares", notif: "Novedades",
+        settings: "Configuraciones", profile: "Perfil", save: "Guardar y Volver", back: "Volver",
+        search: "¿Qué quieres escuchar?", weatherSearch: "Buscar ciudad",
+        humidity: "Humedad", wind: "Viento", max: "Máx", min: "Mín",
+        plTitle: "Crea tu primera lista",
+        plSub: "Es fácil, te ayudaremos.", plBtn: "Crear lista",
+        langTitle: "Idioma", timeTitle: "Formato de hora", timeSub: "Elige tu preferencia: 12 horas o 24 horas.",
+        audioTitle: "Calidad de audio", audioSub: "Ajusta la fidelidad de sonido de las pistas.",
+        audioOpt: ["Automática", "Baja", "Normal", "Alta (Recomendado)"],
+        profileStats: "0 Listas • 0 Seguidores", profileTitle: "Tu Perfil",
+        changePic: "Cambiar", removePic: "Eliminar",
+        legal: "Legal", privacyCenter: "Centro de Privacidad", privacyPolicy: "Política de Privacidad",
+        cookies: "Cookies", ads: "Sobre anuncios", accessibility: "Accesibilidad",
+        notifTitle: "Qué hay de nuevo",
+        notifItemTitle: "Nuevos Lanzamientos", notifItemDesc: "Henrique & Juliano acaban de lanzar un nuevo álbum.",
+        artistVerified: "Artista Verificado", artistFollow: "Seguir", artistPopular: "Populares",
+        trackSuccess: "Éxito 1", trackLive: "En Vivo", trackAcoustic: "Acústico", trackRemix: "Remezcla", trackFeat: "Ft. Invitado",
+        albumType: "Álbum", albumSongs: "canciones", albumTrackPrefix: "Pista del Álbum", thTitle: "Título",
+        cpLabel: "Lista", cpMainTitle: "Mi Lista n.º 1", lblPlName: "Nombre", lblPlDesc: "Descripción",
+        btnSave: "Guardar", btnCancel: "Cancelar", plNamePlaceholder: "Añadir un nombre", plDescPlaceholder: "Añadir una descripción opcional"
+    }
+};
+
+function getTranslations(lang) {
+    return translations[lang] || translations["pt-BR"];
+}
+
+window.getArtistTracks = function(artist, lang) {
+    const t = getTranslations(lang || 'pt-BR');
+    return [
+        {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackSuccess}`, plays: "350.234.111", audio: artist.audio},
+        {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackLive}`, plays: "120.500.222", audio: artist.audio},
+        {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackAcoustic}`, plays: "90.100.500", audio: artist.audio},
+        {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackRemix}`, plays: "45.200.000", audio: artist.audio},
+        {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackFeat}`, plays: "12.854.123", audio: artist.audio}
+    ];
+};
+
+window.getAlbumTracks = function(album, lang) {
+     const t = getTranslations(lang || 'pt-BR');
+     const trackCount = 10;
+     const mockAlbumTracks = [];
+     for(let i = 0; i < trackCount; i++) {
+        mockAlbumTracks.push({
+            name: `${t.albumTrackPrefix} ${i + 1}`,
+            artists: album.artists,
+            image: album.image,
+            audio: album.audio,
+            duration: "3:30"
+        });
+    }
+    return mockAlbumTracks;
+};
+
+// Exposed Play Function
+window.playTrack = function(index, playlist, rowElement) {
+    playTrack(index, playlist, rowElement);
+}
+
+// Exposed Open Details Functions
+window.openArtistDetails = function(artist) {
+    openArtistDetails(artist);
+}
+
+window.openAlbumDetails = function(album) {
+    openAlbumDetails(album);
+}
+
 document.addEventListener("DOMContentLoaded", () => {
-    window.artistsData = [
-        { name: "Henrique & Juliano", image: "./img/artista-henrique-juliano.jpg", audio: "./Music/Última Saudade - Ao Vivo_spotdown.org.mp3" },
-        { name: "Jorge & Mateus", image: "./img/artista-jorge-mateus.jpg", audio: "./Music/Logo Eu_spotdown.org.mp3" },
-        { name: "Zé Neto & Cristiano", image: "./img/artista-ze-neto.jpg", audio: "./Music/Notificação Preferida - Ao Vivo_spotdown.org.mp3" },
-        { name: "Gusttavo Lima", image: "./img/artista-gustavo-limma.jpg", audio: "./Music/Retrovisor_spotdown.org.mp3" },
-        { name: "Luan Santana", image: "./img/artista-luan-santana.jpg", audio: "./Music/DONA - Ao Vivo_spotdown.org.mp3" },
-        { name: "Matheus & Kauan", image: "./img/artista-mateus-kauan.jpg", audio: "./Music/Vou Ter Que Superar - Ao Vivo_spotdown.org.mp3" },
-    ];
-
-    window.albumsData = [
-        { name: "White Noise", artists: "Sleepy john", year: "2023", image: "./img/album-white-noise.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
-        { name: "O céu explica Tudo", artists: "Henrique & Juliano", year: "2017", image: "./img/album-ceu-explica.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-9.mp3" },
-        { name: "Nada como um dia...", artists: "Racionais", year: "2002", image: "./img/album-vida-loka.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-10.mp3" },
-        { name: "HIT ME HARD AND SOFT", artists: "Billie Eilish", year: "2024", image: "./img/album-hit-me.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-11.mp3" },
-        { name: "CAJU", artists: "Liniker", year: "2024", image: "./img/album-caju.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3" },
-        { name: "Escândalo íntimo", artists: "Luisa Sonza", year: "2023", image: "./img/album-escandalo.jpg", audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3" },
-    ];
-
+    // Local Variables for UI
     const artistsData = window.artistsData;
     const albumsData = window.albumsData;
 
     let currentAudio = new Audio();
-   
+    // Critical for Web Audio API to work with external/server files
     currentAudio.crossOrigin = "anonymous"; 
 
     let isPlaying = false;
@@ -31,6 +150,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentlyPlayingRow = null; 
     let currentOpenedPlaylistId = null;
 
+    // --- Web Audio API Variáveis ---
     let audioContext;
     let analyser;
     let audioSource;
@@ -71,18 +191,25 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
+    // --- Lógica do Visualizador de Áudio (Barras de Frequência) ---
+    // Esta função desenha o espectro de áudio usando barras verticais.
     function initVisualizer() {
         if (isVisualizerInit) return;
         
         try {
+            // 1. Cria o contexto de áudio
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
+            // 2. Cria o analisador
             analyser = audioContext.createAnalyser();
             
+            // Suavização para evitar que as barras "pisquem" muito rápido
             analyser.smoothingTimeConstant = 0.8;
 
+            // 3. FFT Size (Fast Fourier Transform).
             analyser.fftSize = 128; 
 
+            // Conecta a fonte de áudio
             audioSource = audioContext.createMediaElementSource(currentAudio);
             audioSource.connect(analyser);
             analyser.connect(audioContext.destination);
@@ -96,10 +223,12 @@ document.addEventListener("DOMContentLoaded", () => {
             function renderFrame() {
                 requestAnimationFrame(renderFrame);
                 
+                // Limpa o canvas para o próximo frame
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 if(!isPlaying) return;
 
+                // 4. Preenche o array dataArray com os dados de frequência atuais (0 a 255)
                 analyser.getByteFrequencyData(dataArray);
 
                 const width = canvas.width;
@@ -109,10 +238,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 let barHeight;
                 let x = 0;
 
-                const gradient = ctx.createLinearGradient(0, height, 0, 0);
-                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");
-                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");
-                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");
+                // 5. Criação do Gradiente Vertical (Roxo -> Ciano -> Verde)
+                const gradient = ctx.createLinearGradient(0, height, 0, 0); // De baixo para cima
+                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");    // Verde Spotify (Base)
+                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");  // Ciano (Meio)
+                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");    // Roxo (Topo - Picos Altos)
 
                 ctx.fillStyle = gradient;
 
@@ -129,127 +259,13 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // --- Dynamic Title Logic ---
     function updatePageTitle(songName) {
         if (isPlaying && songName) {
             document.title = `Tocando agora: ${songName}`;
         } else {
             document.title = "Spotify – Web player";
         }
-    }
-
-    const translations = {
-        "pt-BR": {
-            home: "Início", library: "Sua Biblioteca", createPl: "Criar playlist ou pasta",
-            artists: "Artistas Populares", albums: "Álbuns Populares", notif: "Novidades",
-            settings: "Configurações", profile: "Perfil", save: "Salvar e Voltar", back: "Voltar",
-            search: "O que você quer ouvir?", weatherSearch: "Buscar cidade",
-            humidity: "Umidade", wind: "Vento", max: "Máx", min: "Mín",
-            plTitle: "Crie sua Primeira Playlist",
-            plSub: "É fácil, vamos te ajudar.", plBtn: "Criar Playlist",
-            langTitle: "Idioma", timeTitle: "Horário", timeSub: "Escolha sua preferência de formato: 12 horas ou 24 horas.",
-            audioTitle: "Qualidade do Áudio", audioSub: "Ajuste a fidelidade sonora das faixas.",
-            audioOpt: ["Automática", "Baixa", "Normal", "Alta (Recomendado)"],
-            profileStats: "0 Playlists • 0 Followers", profileTitle: "Seu Perfil",
-            changePic: "Alterar", removePic: "Remover",
-            legal: "Legal", privacyCenter: "Centro de Privacidade", privacyPolicy: "Política de Privacidade",
-            cookies: "Cookies", ads: "Sobre anúncios", accessibility: "Acessibilidade",
-            notifTitle: "O que há de novo",
-            notifItemTitle: "Novos Lançamentos", notifItemDesc: "Henrique & Juliano acabaram de lançar um novo álbum.",
-            artistVerified: "Artista Verificado", artistFollow: "Seguir", artistPopular: "Populares",
-            trackSuccess: "Sucesso 1", trackLive: "Ao Vivo", trackAcoustic: "Acústico", trackRemix: "Remix", trackFeat: "Ft. Convidado",
-            albumType: "Álbum", albumSongs: "músicas", albumTrackPrefix: "Faixa do Álbum", thTitle: "Título",
-            cpLabel: "Playlist", cpMainTitle: "Minha Playlist nº 1", lblPlName: "Nome", lblPlDesc: "Descrição",
-            btnSave: "Salvar", btnCancel: "Cancelar", plNamePlaceholder: "Adicione um nome", plDescPlaceholder: "Adicione uma descrição opcional"
-        },
-        "en-US": {
-            home: "Home", library: "Your Library", createPl: "Create playlist or folder",
-            artists: "Popular Artists", albums: "Popular Albums", notif: "What's New",
-            settings: "Settings", profile: "Profile", save: "Save and Back", back: "Back",
-            search: "What do you want to listen to?", weatherSearch: "Search city",
-            humidity: "Humidity", wind: "Wind", max: "Max", min: "Min",
-            plTitle: "Create your first playlist",
-            plSub: "It's easy, we'll help you.", plBtn: "Create Playlist",
-            langTitle: "Language", timeTitle: "Time Format", timeSub: "Choose your preference: 12-hour or 24-hour.",
-            audioTitle: "Audio Quality", audioSub: "Adjust the sound fidelity of the tracks.",
-            audioOpt: ["Automatic", "Low", "Normal", "High (Recommended)"],
-            profileStats: "0 Playlists • 0 Followers", profileTitle: "Your Profile",
-            changePic: "Change", removePic: "Remove",
-            legal: "Legal", privacyCenter: "Privacy Center", privacyPolicy: "Privacy Policy",
-            cookies: "Cookies", ads: "About Ads", accessibility: "Accessibility",
-            notifTitle: "What's new",
-            notifItemTitle: "New Releases", notifItemDesc: "Henrique & Juliano just released a new album.",
-            artistVerified: "Verified Artist", artistFollow: "Follow", artistPopular: "Popular",
-            trackSuccess: "Hit 1", trackLive: "Live", trackAcoustic: "Acoustic", trackRemix: "Remix", trackFeat: "Feat. Guest",
-            albumType: "Album", albumSongs: "songs", albumTrackPrefix: "Album Track", thTitle: "Title",
-            cpLabel: "Playlist", cpMainTitle: "My Playlist #1", lblPlName: "Name", lblPlDesc: "Description",
-            btnSave: "Save", btnCancel: "Cancel", plNamePlaceholder: "Add a name", plDescPlaceholder: "Add an optional description"
-        },
-        "es-ES": {
-            home: "Inicio", library: "Tu Biblioteca", createPl: "Crear lista o carpeta",
-            artists: "Artistas Populares", albums: "Álbumes Populares", notif: "Novedades",
-            settings: "Configuraciones", profile: "Perfil", save: "Guardar y Volver", back: "Volver",
-            search: "¿Qué quieres escuchar?", weatherSearch: "Buscar ciudad",
-            humidity: "Humedad", wind: "Viento", max: "Máx", min: "Mín",
-            plTitle: "Crea tu primera lista",
-            plSub: "Es fácil, te ayudaremos.", plBtn: "Crear lista",
-            langTitle: "Idioma", timeTitle: "Formato de hora", timeSub: "Elige tu preferencia: 12 horas o 24 horas.",
-            audioTitle: "Calidad de audio", audioSub: "Ajusta la fidelidad de sonido de las pistas.",
-            audioOpt: ["Automática", "Baja", "Normal", "Alta (Recomendado)"],
-            profileStats: "0 Listas • 0 Seguidores", profileTitle: "Tu Perfil",
-            changePic: "Cambiar", removePic: "Eliminar",
-            legal: "Legal", privacyCenter: "Centro de Privacidad", privacyPolicy: "Política de Privacidad",
-            cookies: "Cookies", ads: "Sobre anuncios", accessibility: "Accesibilidad",
-            notifTitle: "Qué hay de nuevo",
-            notifItemTitle: "Nuevos Lanzamientos", notifItemDesc: "Henrique & Juliano acaban de lanzar un nuevo álbum.",
-            artistVerified: "Artista Verificado", artistFollow: "Seguir", artistPopular: "Populares",
-            trackSuccess: "Éxito 1", trackLive: "En Vivo", trackAcoustic: "Acústico", trackRemix: "Remezcla", trackFeat: "Ft. Invitado",
-            albumType: "Álbum", albumSongs: "canciones", albumTrackPrefix: "Pista del Álbum", thTitle: "Título",
-            cpLabel: "Lista", cpMainTitle: "Mi Lista n.º 1", lblPlName: "Nombre", lblPlDesc: "Descripción",
-            btnSave: "Guardar", btnCancel: "Cancelar", plNamePlaceholder: "Añadir un nombre", plDescPlaceholder: "Añadir una descripción opcional"
-        }
-    };
-
-    function getTranslations(lang) {
-        return translations[lang] || translations["pt-BR"];
-    }
-
-    window.getArtistTracks = function(artist, lang) {
-        const t = getTranslations(lang || 'pt-BR');
-        return [
-            {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackSuccess}`, plays: "350.234.111", audio: artist.audio},
-            {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackLive}`, plays: "120.500.222", audio: artist.audio},
-            {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackAcoustic}`, plays: "90.100.500", audio: artist.audio},
-            {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackRemix}`, plays: "45.200.000", audio: artist.audio},
-            {...artist, artistName: artist.name, name: `${artist.name} - ${t.trackFeat}`, plays: "12.854.123", audio: artist.audio}
-        ];
-    };
-
-    window.getAlbumTracks = function(album, lang) {
-         const t = getTranslations(lang || 'pt-BR');
-         const trackCount = 10;
-         const mockAlbumTracks = [];
-         for(let i = 0; i < trackCount; i++) {
-            mockAlbumTracks.push({
-                name: `${t.albumTrackPrefix} ${i + 1}`,
-                artists: album.artists,
-                image: album.image,
-                audio: album.audio,
-                duration: "3:30"
-            });
-        }
-        return mockAlbumTracks;
-    };
-    
-    window.playTrack = function(index, playlist, rowElement) {
-        playTrack(index, playlist, rowElement);
-    }
-    
-    window.openArtistDetails = function(artist) {
-        openArtistDetails(artist);
-    }
-    
-    window.openAlbumDetails = function(album) {
-        openAlbumDetails(album);
     }
 
     function getAllAvailableTracks() {
@@ -307,6 +323,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function playTrack(index, playlist, rowElement = null) {
+        // Inicializa o Visualizador na primeira interação do usuário.
         if (!isVisualizerInit) {
             initVisualizer();
             if(audioContext && audioContext.state === 'suspended') {
@@ -333,6 +350,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             currentAudio.src = track.audio;
+            // Tenta dar play.
             currentAudio.play().catch(e => console.log("Erro no autoplay (esperado sem interação):", e));
             isPlaying = true;
 
@@ -369,6 +387,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
+    // Pause Event for Title
     currentAudio.addEventListener('pause', () => {
          updatePageTitle(null);
     });
@@ -424,11 +443,12 @@ document.addEventListener("DOMContentLoaded", () => {
         [mainSection, settingsSection, notifPage, profilePage, artistDetailsPage, albumDetailsPage, createPlaylistPage, playlistDetailsPage].forEach(s => {
             if(s) {
                 s.style.display = 'none';
-                s.classList.remove('fade-in');
+                s.classList.remove('fade-in'); // Reset animation
             }
         });
         
         section.style.display = 'block';
+        // Force reflow for animation restart
         void section.offsetWidth; 
         section.classList.add('fade-in');
         

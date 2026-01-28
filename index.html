@@ -11,6 +11,14 @@
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&icon_names=home">
     <link rel="stylesheet" href="./styles/weather.css">
+    <!-- Import Map for Gemini SDK -->
+    <script type="importmap">
+    {
+        "imports": {
+            "@google/genai": "https://esm.run/@google/genai"
+        }
+    }
+    </script>
     <title>Spotify – Web player: música para todas as pessoas</title>
 </head>
 
@@ -139,6 +147,9 @@
             </div>
 
             <section class="content" id="main-content">
+                <h2 id="title-songs" style="display: none;">Músicas Encontradas</h2>
+                <div class="songs-grid" style="margin-bottom: 20px;"></div>
+
                 <h2 id="title-artists">Artistas Populares</h2>
                 <div class="artists-grid"></div>
                 <h2 id="title-albums">Álbuns Populares</h2>
@@ -390,6 +401,7 @@
         </main>
     </div>
 
+    <!-- Barra do Player com Canvas de Visualização -->
     <div id="player-bar" class="player-bar-hidden">
         
         <div style="position: absolute; top: 10px; right: 20px; display: flex; gap: 15px; z-index: 10;">
@@ -416,6 +428,7 @@
                 <input type="range" id="progress-slider" min="0" max="100" value="0">
                 <span id="total-duration">0:00</span>
                 
+                <!-- Canvas aumentado (resolução interna) para melhor qualidade -->
                 <canvas id="audio-visualizer" width="300" height="100"></canvas>
             </div>
         </div>
@@ -426,8 +439,9 @@
         </div>
     </div>
     
-    <script src="script.js"></script>
-    <script type="module" src="./javascript/ai-search.js"></script>
+    <!-- Scripts with type="module" for ES Modules (Gemini) -->
+    <script src="./script.js"></script>
+    <script type="module" src="/Search ai/ai-search.js"></script>
     <script src="./javascript/weather.js"></script>
 </body>
 </html>

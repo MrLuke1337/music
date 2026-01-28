@@ -247,6 +247,7 @@ main {
 }
 
 .search-bar {
+    position: relative;
     flex: 1;
     max-width: 400px;
     background-color: #242424;
@@ -271,6 +272,21 @@ main {
     width: 100%;
 }
 
+.clear-search-btn {
+    position: absolute;
+    right: 15px;
+    color: #b3b3b3;
+    cursor: pointer;
+    display: none;
+    font-size: 16px;
+    z-index: 10;
+}
+
+.clear-search-btn:hover {
+    color: #ff5555;
+}
+
+/* Fix for Chrome Autocomplete background in Search */
 .search-bar input:-webkit-autofill,
 .search-bar input:-webkit-autofill:hover, 
 .search-bar input:-webkit-autofill:focus, 
@@ -340,7 +356,8 @@ main {
 
 
 .artists-grid,
-.albums-grid {
+.albums-grid,
+.songs-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
     gap: 20px;
@@ -349,7 +366,8 @@ main {
 }
 
 .artist-card,
-.album-card {
+.album-card,
+.song-card {
     background-color: transparent;
     padding: 16px;
     border-radius: 8px;
@@ -358,7 +376,8 @@ main {
 }
 
 .artist-card:hover,
-.album-card:hover {
+.album-card:hover,
+.song-card:hover {
     background-color: #282828;
 }
 
@@ -370,7 +389,8 @@ main {
     margin-bottom: 15px;
 }
 
-.album-card img {
+.album-card img,
+.song-card img {
     width: 100%;
     aspect-ratio: 1/1;
     border-radius: 8px;
@@ -399,7 +419,8 @@ main {
     transform: translateY(-15px);
 }
 
-.album-card:hover .play-button {
+.album-card:hover .play-button,
+.song-card:hover .play-button {
     opacity: 1;
     transform: translateY(-45px);
     right: 30px;
@@ -431,11 +452,13 @@ main {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     visibility: visible;
+    /* Importante para o Canvas se comportar como fundo */
     overflow: hidden;
 }
 
+/* Estilo do Visualizador de Áudio (Agora Spectrum Pequeno) */
 #audio-visualizer {
-    width: 120px;
+    width: 120px; /* Aumentado um pouco para visibilidade */
     height: 40px;
     margin-left: 15px;
     opacity: 1;
@@ -443,6 +466,7 @@ main {
     z-index: 1;
 }
 
+/* Garante que os elementos do player fiquem acima do visualizer */
 .player-content-info, .player-controls, .player-volume-container {
     z-index: 5;
     position: relative;
@@ -1423,37 +1447,79 @@ input:checked + .slider:before {
     transform: scale(1.1);
 }
 
-.ai-suggestions-container {
-    background: linear-gradient(135deg, rgba(29, 185, 84, 0.1), rgba(18, 18, 18, 0.8));
-    border-radius: 12px;
-    padding: 20px;
-    margin: 20px 0;
-    border-left: 4px solid #1db954;
-    animation: fadeIn 0.5s ease-in-out;
+/* === AI SEARCH STYLES === */
+.ai-suggestion-box {
+    background: linear-gradient(135deg, #16ff0141, #121212);
+    border: 1px solid #333;
+    border-left: 4px solid #08e61393;
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    animation: fadeIn 0.4s ease;
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-.ai-suggestion {
-    margin-bottom: 10px;
-}
-
-.ai-suggestion h4 {
-    font-size: 16px;
+.ai-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 14px;
     font-weight: 700;
+    color: #1db954;
+    text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
+.ai-suggestion-box p {
+    font-size: 15px;
+    color: #e0e0e0;
+    margin-bottom: 12px;
+    line-height: 1.5;
+}
+
+.ai-tags {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.ai-tags span {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    color: #b3b3b3;
+    border: 1px solid rgba(255,255,255,0.05);
+}
+
+/* Loader Styles */
+.ai-search-loader {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 20px;
+    color: #b3b3b3;
+    font-size: 14px;
+    animation: fadeIn 0.3s ease;
+}
+
+.spinner {
+    width: 20px;
+    height: 20px;
+    border: 2px solid rgba(29, 185, 84, 0.3);
+    border-top: 2px solid #1db954;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
+    from { opacity: 0; transform: translateY(5px); }
     to { opacity: 1; transform: translateY(0); }
-}
-
-.ai-loading {
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { opacity: 0.6; }
-    50% { opacity: 1; }
-    100% { opacity: 0.6; }
 }
