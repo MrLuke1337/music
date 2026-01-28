@@ -120,20 +120,6 @@ window.getAlbumTracks = function(album, lang) {
     return mockAlbumTracks;
 };
 
-// Exposed Play Function
-window.playTrack = function(index, playlist, rowElement) {
-    playTrack(index, playlist, rowElement);
-}
-
-// Exposed Open Details Functions
-window.openArtistDetails = function(artist) {
-    openArtistDetails(artist);
-}
-
-window.openAlbumDetails = function(album) {
-    openAlbumDetails(album);
-}
-
 document.addEventListener("DOMContentLoaded", () => {
     // Local Variables for UI
     const artistsData = window.artistsData;
@@ -1053,6 +1039,11 @@ if (btnSave) {
         openPlaylistDetails(newPlaylist);
     });
 }
+
+    // EXPOSE FUNCTIONS TO WINDOW FOR AI SEARCH
+    window.playTrack = playTrack;
+    window.openArtistDetails = openArtistDetails;
+    window.openAlbumDetails = openAlbumDetails;
 
 renderSavedPlaylists();
 loadSettings();
