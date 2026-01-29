@@ -1,13 +1,7 @@
 import { GoogleGenAI, Type } from "@google/genai";
 
-// ==========================================
-// ⚠️ CONFIGURAÇÃO PARA GITHUB PAGES ⚠️
-// Como o GitHub Pages é estático, não tem variáveis de ambiente (.env).
-// Para a IA funcionar online, cole sua API Key do Gemini abaixo entre as aspas.
-const MANUAL_KEY_FOR_GITHUB_PAGES = ""; 
-// ==========================================
+const MANUAL_KEY_FOR_GITHUB_PAGES = "AIzaSyBQnyBTcgRZQxlvo8LD9FK-WsPw3IzRQy4"; 
 
-// Polyfill robusto para garantir que process.env.API_KEY exista no navegador
 if (typeof window !== "undefined") {
     if (typeof window.process === "undefined") {
         window.process = { env: {} };
@@ -15,14 +9,10 @@ if (typeof window !== "undefined") {
     if (!window.process.env) {
         window.process.env = {};
     }
-    // Se não houver chave no env (build), usa a manual
-    if (!window.process.env.API_KEY && MANUAL_KEY_FOR_GITHUB_PAGES) {
-        window.process.env.API_KEY = MANUAL_KEY_FOR_GITHUB_PAGES;
-    }
+    window.process.env.API_KEY = MANUAL_KEY_FOR_GITHUB_PAGES;
 }
 
-// Chave final
-const API_KEY = typeof process !== "undefined" && process.env ? process.env.API_KEY : null;
+const API_KEY = typeof process !== "undefined" && process.env ? process.env.API_KEY : MANUAL_KEY_FOR_GITHUB_PAGES;
 
 document.addEventListener("DOMContentLoaded", () => {
     const searchInput = document.getElementById('main-search-input');
@@ -30,12 +20,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const albumsGrid = document.querySelector('.albums-grid');
     const songsGrid = document.querySelector('.songs-grid');
     
-    // Elementos de Título
     const artistsTitle = document.getElementById('title-artists');
     const albumsTitle = document.getElementById('title-albums');
     const songsTitle = document.getElementById('title-songs');
 
-    // Inicializa IA
     let ai = null;
     if (API_KEY) {
         try {
@@ -48,7 +36,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.warn("⚠️ API Key não detectada. Adicione-a na variável MANUAL_KEY_FOR_GITHUB_PAGES em javascript/ai-search.js para a IA funcionar.");
     }
 
-    // Configuração do Botão Limpar (X)
     let clearBtn = document.querySelector('.clear-search-btn');
     if (!clearBtn && searchInput) {
         clearBtn = document.createElement('i');
@@ -65,19 +52,16 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Função auxiliar para coletar todas as músicas disponíveis nos dados globais
     function getAllTracks() {
         const lang = document.getElementById('language-select') ? document.getElementById('language-select').value : 'pt-BR';
         let tracks = [];
         
-        // Coleta de Artistas
         if (window.artistsData && window.getArtistTracks) {
             window.artistsData.forEach(artist => {
                 tracks.push(...window.getArtistTracks(artist, lang));
             });
         }
         
-        // Coleta de Álbuns
         if (window.albumsData && window.getAlbumTracks) {
             window.albumsData.forEach(album => {
                 tracks.push(...window.getAlbumTracks(album, lang));
@@ -86,7 +70,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return tracks;
     }
 
-    // Função que chama a IA do Google
     async function searchWithGemini(query) {
         if (!ai) return null;
 
@@ -94,30 +77,41 @@ document.addEventListener("DOMContentLoaded", () => {
         const allAlbums = window.albumsData || [];
         const allTracks = getAllTracks();
 
-        // Contexto simplificado para economizar tokens
         const context = {
+            data_atual: new Date().toLocaleString('pt-BR', { dateStyle: 'full', timeStyle: 'short' }),
             artists: allArtists.map(a => a.name),
-            albums: allAlbums.map(a => a.name),
-            songs_sample: allTracks.slice(0, 50).map(t => t.name) 
+            albums: allAlbums.map(a => `${a.name} (de ${a.artists})`),
+            songs_detailed: allTracks.slice(0, 60).map(t => `${t.name} (Artista: ${t.artistName || t.artists})`) 
         };
 
         try {
             const response = await ai.models.generateContent({
                 model: 'gemini-3-flash-preview',
                 contents: `
-                Você é o motor de busca inteligente do Spotify.
+                Você é uma IA Híbrida: Atua como DJ especialista em música E como assistente pessoal útil.
                 
-                CONTEXTO DE DADOS DO APP:
+                CONTEXTO ATUAL (Informações Reais):
                 ${JSON.stringify(context)}
                 
-                O USUÁRIO BUSCOU: "${query}"
+                O USUÁRIO DISSE: "${query}"
                 
-                Instruções:
-                1. Analise a busca e encontre correspondências em Artistas, Álbuns e Músicas.
-                2. Corrija erros de digitação (ex: "Jorje" -> "Jorge & Mateus").
-                3. Retorne arrays de strings contendo APENAS os nomes exatos encontrados no contexto.
-                4. Se a busca for genérica (ex: "Sertanejo"), encontre itens desse gênero.
-                5. Crie uma mensagem curta (max 100 caracteres) e divertida sobre o resultado.
+                INSTRUÇÕES:
+                1. ANALISE A INTENÇÃO:
+                   - É uma pergunta geral (ex: "Que dia é hoje?", "Conte uma piada", "Quem é o presidente?", "Resuma tal coisa")?
+                   - OU é uma busca por música/vibe (ex: "Toca algo triste", "Sertanejo", "Músicas do Luan")?
+
+                2. SE FOR PERGUNTA GERAL:
+                   - Responda a pergunta diretamente e com simpatia no campo 'ai_message'.
+                   - Use a 'data_atual' do contexto se perguntarem sobre tempo/dia.
+                   - Deixe os arrays de música vazios.
+
+                3. SE FOR BUSCA MUSICAL:
+                   - Gere um comentário de DJ divertido no 'ai_message'.
+                   - Preencha os arrays com os nomes EXATOS que encontrar no contexto.
+
+                4. FORMATO:
+                   - Seja amigável e use emojis.
+                   - Responda sempre em JSON.
                 `,
                 config: {
                     responseMimeType: "application/json",
@@ -127,7 +121,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             matched_artists: { type: Type.ARRAY, items: { type: Type.STRING } },
                             matched_albums: { type: Type.ARRAY, items: { type: Type.STRING } },
                             matched_songs: { type: Type.ARRAY, items: { type: Type.STRING } },
-                            ai_message: { type: Type.STRING },
+                            ai_message: { type: Type.STRING, description: "A resposta da IA para o usuário" },
                             tags: { type: Type.ARRAY, items: { type: Type.STRING } }
                         }
                     }
@@ -139,13 +133,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } catch (error) {
             console.error("Erro na busca IA:", error);
-            // Em caso de erro (ex: cota excedida), retorna null para usar fallback local
             return null;
         }
         return null;
     }
 
-    // Busca Local (Fallback)
     function localSearch(query) {
         const lowerQ = query.toLowerCase();
         const allArtists = window.artistsData || [];
@@ -156,12 +148,11 @@ document.addEventListener("DOMContentLoaded", () => {
             artists: allArtists.filter(a => a.name.toLowerCase().includes(lowerQ)),
             albums: allAlbums.filter(a => a.name.toLowerCase().includes(lowerQ)),
             songs: allTracks.filter(t => t.name.toLowerCase().includes(lowerQ)),
-            message: "Resultados locais (IA indisponível)",
-            tags: ["Busca Local"]
+            message: null, 
+            tags: ["Resultados Locais"]
         };
     }
 
-    // Função de Busca Principal
     async function performSearch(query) {
         if (!query.trim()) {
             resetInterface();
@@ -184,34 +175,40 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let usedAI = false;
 
-        // 1. Tenta Busca com IA
         if (ai) {
             const aiResponse = await searchWithGemini(query);
             if (aiResponse) {
-                results.artists = allArtists.filter(a => aiResponse.matched_artists.includes(a.name));
-                results.albums = allAlbums.filter(a => aiResponse.matched_albums.includes(a.name));
-                results.songs = allTracks.filter(t => aiResponse.matched_songs.includes(t.name));
-                results.message = aiResponse.ai_message;
-                results.tags = aiResponse.tags;
+                results.artists = allArtists.filter(a => aiResponse.matched_artists && aiResponse.matched_artists.some(ma => a.name.includes(ma) || ma.includes(a.name)));
                 
-                // Se a IA retornou tudo vazio, marca como não usada para tentar o fallback amplo
-                if (results.artists.length > 0 || results.albums.length > 0 || results.songs.length > 0) {
-                    usedAI = true;
-                }
+                results.albums = allAlbums.filter(a => aiResponse.matched_albums && aiResponse.matched_albums.some(ma => {
+                    const cleanName = ma.split('(')[0].trim();
+                    return a.name.includes(cleanName) || cleanName.includes(a.name);
+                }));
+
+                results.songs = allTracks.filter(t => aiResponse.matched_songs && aiResponse.matched_songs.some(ms => {
+                    const cleanName = ms.split('(')[0].trim();
+                    return t.name.includes(cleanName) || cleanName.includes(t.name);
+                }));
+
+                results.message = aiResponse.ai_message;
+                results.tags = aiResponse.tags || ["IA"];
+                
+                usedAI = true;
             }
         }
 
-        // 2. Fallback ou Complemento Local
         if (!usedAI) {
             const localResults = localSearch(query);
             results.artists = localResults.artists;
             results.albums = localResults.albums;
             results.songs = localResults.songs;
+            results.tags = localResults.tags;
             
             if (!ai) {
-                 results.message = "Mostrando resultados locais (Adicione sua API Key).";
+                 results.message = "Resultados offline.";
             } else {
-                 results.message = `Resultados diretos para "${query}"`;
+                 results.message = results.artists.length + results.albums.length + results.songs.length > 0 ? 
+                    `Resultados para "${query}"` : "Nenhum resultado encontrado.";
             }
         }
 
@@ -221,27 +218,25 @@ document.addEventListener("DOMContentLoaded", () => {
     function renderResults(data) {
         hideLoading();
         
-        // Limpa grids
         if (artistsGrid) artistsGrid.innerHTML = '';
         if (albumsGrid) albumsGrid.innerHTML = '';
         if (songsGrid) songsGrid.innerHTML = '';
 
-        // Remove sugestão anterior
         const oldSuggestion = document.querySelector('.ai-suggestion-box');
         if(oldSuggestion) oldSuggestion.remove();
 
-        // 1. Renderiza Mensagem (IA ou Local)
         if (data.message) {
             const suggestionBox = document.createElement('div');
             suggestionBox.className = 'ai-suggestion-box fade-in';
             
-            // Verifica se foi realmente IA (tem tags geradas)
-            const isAI = !!ai && (data.tags && data.tags.length > 0 && !data.tags.includes("Busca Local"));
+            const isAI = !!ai && (data.tags && !data.tags.includes("Resultados Locais"));
+            const iconClass = isAI ? 'fa-solid fa-wand-magic-sparkles' : 'fa-solid fa-magnifying-glass';
+            const titleText = isAI ? 'Gemini AI' : 'Busca';
             
             suggestionBox.innerHTML = `
                 <div class="ai-header">
-                    <i class="${isAI ? 'fa-solid fa-wand-magic-sparkles' : 'fa-solid fa-magnifying-glass'}"></i>
-                    <span>${isAI ? 'IA Insight' : 'Busca Inteligente'}</span>
+                    <i class="${iconClass}"></i>
+                    <span>${titleText}</span>
                 </div>
                 <p>${data.message}</p>
                 <div class="ai-tags">
@@ -254,7 +249,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         let hasResults = false;
 
-        // 2. Músicas
         if (data.songs.length > 0) {
             hasResults = true;
             if(songsTitle) songsTitle.style.display = 'block';
@@ -269,7 +263,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if(songsTitle) songsTitle.style.display = 'none';
         }
 
-        // 3. Artistas
         if (data.artists.length > 0) {
             hasResults = true;
             if(artistsTitle) artistsTitle.style.display = 'block';
@@ -284,7 +277,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if(artistsTitle) artistsTitle.style.display = 'none';
         }
 
-        // 4. Álbuns
         if (data.albums.length > 0) {
             hasResults = true;
             if(albumsTitle) albumsTitle.style.display = 'block';
@@ -299,14 +291,11 @@ document.addEventListener("DOMContentLoaded", () => {
             if(albumsTitle) albumsTitle.style.display = 'none';
         }
 
-        // Caso vazio
-        if (!hasResults) {
-            if(artistsGrid) {
-                artistsGrid.innerHTML = '<p style="color: #b3b3b3; grid-column: 1/-1; padding: 20px;">Nenhum resultado encontrado. Tente buscar por artista, música ou álbum.</p>';
-            }
-            if(artistsTitle) artistsTitle.style.display = 'block';
-            if(artistsTitle) artistsTitle.textContent = "Resultados";
+        if (!hasResults && !data.message) {
+             if(artistsGrid) artistsGrid.innerHTML = '<p style="color: #b3b3b3; padding: 20px;">Nada encontrado.</p>';
+             if(artistsTitle) artistsTitle.style.display = 'block';
         }
+
     }
 
     function createCard(item, type) {
@@ -359,7 +348,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if(songsTitle) songsTitle.style.display = 'none';
         if(songsGrid) songsGrid.innerHTML = '';
         
-        // Restaura grid original
         if (window.artistsData && artistsGrid) {
             artistsGrid.innerHTML = '';
             if(artistsTitle) {
@@ -386,7 +374,7 @@ document.addEventListener("DOMContentLoaded", () => {
         loader.className = 'ai-search-loader';
         loader.innerHTML = `
             <div class="spinner"></div>
-            <span>Buscando com IA...</span>
+            <span>Busca Inteligente...</span>
         `;
         
         const mainContent = document.getElementById('main-content');
@@ -411,10 +399,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Delay para evitar muitas requisições
             timeout = setTimeout(() => {
                 performSearch(val);
-            }, 600); 
+            }, 800); 
         });
 
         searchInput.addEventListener('keydown', (e) => {
@@ -424,5 +411,4 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
-
 });
