@@ -120,10 +120,12 @@ window.getAlbumTracks = function(album, lang) {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
+    // Local Variables for UI
     const artistsData = window.artistsData;
     const albumsData = window.albumsData;
 
     let currentAudio = new Audio();
+    // Critical for Web Audio API to work with external/server files
     currentAudio.crossOrigin = "anonymous"; 
 
     let isPlaying = false;
@@ -133,6 +135,7 @@ document.addEventListener("DOMContentLoaded", () => {
     let currentlyPlayingRow = null; 
     let currentOpenedPlaylistId = null;
 
+    // --- Web Audio API Variáveis ---
     let audioContext;
     let analyser;
     let audioSource;
@@ -173,18 +176,25 @@ document.addEventListener("DOMContentLoaded", () => {
         return `${min}:${sec < 10 ? '0' : ''}${sec}`;
     }
 
+    // --- Lógica do Visualizador de Áudio (Barras de Frequência) ---
+    // Esta função desenha o espectro de áudio usando barras verticais.
     function initVisualizer() {
         if (isVisualizerInit) return;
         
         try {
+            // 1. Cria o contexto de áudio
             audioContext = new (window.AudioContext || window.webkitAudioContext)();
             
+            // 2. Cria o analisador
             analyser = audioContext.createAnalyser();
             
+            // Suavização para evitar que as barras "pisquem" muito rápido
             analyser.smoothingTimeConstant = 0.8;
 
+            // 3. FFT Size (Fast Fourier Transform).
             analyser.fftSize = 128; 
 
+            // Conecta a fonte de áudio
             audioSource = audioContext.createMediaElementSource(currentAudio);
             audioSource.connect(analyser);
             analyser.connect(audioContext.destination);
@@ -198,10 +208,12 @@ document.addEventListener("DOMContentLoaded", () => {
             function renderFrame() {
                 requestAnimationFrame(renderFrame);
                 
+                // Limpa o canvas para o próximo frame
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
 
                 if(!isPlaying) return;
 
+                // 4. Preenche o array dataArray com os dados de frequência atuais (0 a 255)
                 analyser.getByteFrequencyData(dataArray);
 
                 const width = canvas.width;
@@ -211,10 +223,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 let barHeight;
                 let x = 0;
 
-                const gradient = ctx.createLinearGradient(0, height, 0, 0); 
-                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");
-                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");
-                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");
+                // 5. Criação do Gradiente Vertical (Roxo -> Ciano -> Verde)
+                const gradient = ctx.createLinearGradient(0, height, 0, 0); // De baixo para cima
+                gradient.addColorStop(0, "rgba(29, 185, 84, 1)");    // Verde Spotify (Base)
+                gradient.addColorStop(0.5, "rgba(0, 198, 255, 1)");  // Ciano (Meio)
+                gradient.addColorStop(1, "rgba(189, 0, 255, 1)");    // Roxo (Topo - Picos Altos)
 
                 ctx.fillStyle = gradient;
 
@@ -231,6 +244,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
+    // --- Dynamic Title Logic ---
     function updatePageTitle(songName) {
         if (isPlaying && songName) {
             document.title = `Tocando agora: ${songName}`;
@@ -294,6 +308,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function playTrack(index, playlist, rowElement = null) {
+        // Inicializa o Visualizador na primeira interação do usuário.
         if (!isVisualizerInit) {
             initVisualizer();
             if(audioContext && audioContext.state === 'suspended') {
@@ -320,6 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         } else {
             currentAudio.src = track.audio;
+            // Tenta dar play.
             currentAudio.play().catch(e => console.log("Erro no autoplay (esperado sem interação):", e));
             isPlaying = true;
 
@@ -356,6 +372,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
     
+    // Pause Event for Title
     currentAudio.addEventListener('pause', () => {
          updatePageTitle(null);
     });
@@ -411,11 +428,12 @@ document.addEventListener("DOMContentLoaded", () => {
         [mainSection, settingsSection, notifPage, profilePage, artistDetailsPage, albumDetailsPage, createPlaylistPage, playlistDetailsPage].forEach(s => {
             if(s) {
                 s.style.display = 'none';
-                s.classList.remove('fade-in');
+                s.classList.remove('fade-in'); // Reset animation
             }
         });
         
         section.style.display = 'block';
+        // Force reflow for animation restart
         void section.offsetWidth; 
         section.classList.add('fade-in');
         
@@ -746,15 +764,19 @@ document.addEventListener("DOMContentLoaded", () => {
     function loadProfileImage() {
         const savedImage = localStorage.getItem('user_profile_image');
         
+        // Elements to update
         const playlistUserAvatar = document.getElementById('playlist-user-avatar');
         const navUserImg = document.getElementById('nav-user-img');
         const navUserIcon = document.getElementById('nav-user-icon');
 
         if (savedImage && savedImage.startsWith('data:image')) {
+            // Update Profile Page
             if(profilePicDisplay) profilePicDisplay.src = savedImage;
             
+            // Update Playlist Detail Page (Replaces the "U" with Profile Pic)
             if(playlistUserAvatar) playlistUserAvatar.src = savedImage;
             
+            // Update Top Nav
             if(navUserImg) {
                 navUserImg.src = savedImage;
                 navUserImg.style.display = 'block';
@@ -763,10 +785,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (removePicBtn) removePicBtn.style.display = "block";
         } else {
-
+            // Reset to default "U" for Profile and Playlist
             if(profilePicDisplay) profilePicDisplay.src = defaultAvatar;
             if(playlistUserAvatar) playlistUserAvatar.src = defaultAvatar;
             
+            // Reset Top Nav to FontAwesome Icon
             if(navUserImg) navUserImg.style.display = 'none';
             if(navUserIcon) navUserIcon.style.display = 'block';
 
@@ -782,6 +805,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const reader = new FileReader();
                 reader.onload = (e) => {
                     localStorage.setItem('user_profile_image', e.target.result);
+                    // Update all images immediately
                     loadProfileImage();
                 };
                 reader.readAsDataURL(file);
@@ -795,6 +819,7 @@ document.addEventListener("DOMContentLoaded", () => {
             e.stopPropagation();
             localStorage.removeItem('user_profile_image');
             profileUpload.value = "";
+            // Reset all images immediately
             loadProfileImage();
         });
     }
@@ -834,18 +859,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         recList.innerHTML = '';
         
+        // --- NEW FILTER LOGIC START ---
+        // 1. Get current playlist tracks to exclude them
         const playlists = JSON.parse(localStorage.getItem('my_custom_playlists')) || [];
         const currentPl = playlists.find(p => p.id === currentOpenedPlaylistId);
         const existingKeys = new Set();
         
         if (currentPl && currentPl.songs) {
             currentPl.songs.forEach(s => {
+                // Create unique key based on name and artist
                 existingKeys.add(s.name + (s.artists || s.artistName || ""));
             });
         }
 
         const allTracks = getAllAvailableTracks();
         
+        // 2. Filter available tracks excluding those already in playlist
         const availableTracks = allTracks.filter(track => {
              const key = track.name + (track.artists || track.artistName || "");
              return !existingKeys.has(key);
@@ -869,6 +898,7 @@ document.addEventListener("DOMContentLoaded", () => {
              recList.appendChild(msg);
              return;
         }
+        // --- NEW FILTER LOGIC END ---
 
         displayTracks.forEach(track => {
             const div = document.createElement('div');
@@ -898,6 +928,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const savedPlaylists = JSON.parse(localStorage.getItem('my_custom_playlists')) || [];
     const updatedPlaylist = savedPlaylists.find(p => p.id === playlist.id) || playlist;
 
+    // Ensure profile image is up to date when opening playlist
     loadProfileImage();
 
     currentOpenedPlaylistId = updatedPlaylist.id;
@@ -943,6 +974,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             row.addEventListener('click', () => playTrack(i, updatedPlaylist.songs, row));
 
+            // Botão remover música
             const btnRemove = row.querySelector('.btn-remove-song');
             btnRemove.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -1065,6 +1097,7 @@ if (btnSave) {
     });
 }
 
+    // EXPOSE FUNCTIONS TO WINDOW FOR AI SEARCH
     window.playTrack = playTrack;
     window.openArtistDetails = openArtistDetails;
     window.openAlbumDetails = openAlbumDetails;
