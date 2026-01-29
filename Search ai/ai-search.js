@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
 // Tenta pegar a chave do ambiente ou usa a manual (ex: GitHub Pages)
@@ -47,6 +46,9 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!clearBtn && searchInput) {
         clearBtn = document.createElement('i');
         clearBtn.className = 'fa-solid fa-xmark clear-search-btn';
+        // FIXED: Force explicit hide on creation to prevent flashing on load
+        clearBtn.style.display = 'none'; 
+        
         if (searchInput.parentElement) {
             searchInput.parentElement.appendChild(clearBtn);
         }
@@ -141,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
             artists: artists,
             albums: albums,
             songs: songs,
-            message: `Resultados locais para "${query}"`, 
+            message: `Resultados locais para "${query}"`,
         };
     }
 

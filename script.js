@@ -638,11 +638,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const profileIcon = document.getElementById('profile-nav-btn');
         if(profileIcon) profileIcon.querySelector('.tooltip-text').innerText = t.profile;
 
-        const h2Main = document.querySelectorAll('#main-content h2');
-        if (h2Main.length >= 2) {
-            h2Main[0].innerText = t.artists;
-            h2Main[1].innerText = t.albums;
-        }
+        // FIXED: Use IDs to ensure correct elements are targeted regardless of DOM order or hidden elements
+        const h2Artists = document.getElementById('title-artists');
+        const h2Albums = document.getElementById('title-albums');
+        
+        if (h2Artists) h2Artists.innerText = t.artists;
+        if (h2Albums) h2Albums.innerText = t.albums;
 
         const plBox = document.querySelector('.nav-playlist');
         if (plBox) {
