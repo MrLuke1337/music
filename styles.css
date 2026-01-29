@@ -286,6 +286,7 @@ main {
     color: #ff5555;
 }
 
+/* Fix for Chrome Autocomplete background in Search */
 .search-bar input:-webkit-autofill,
 .search-bar input:-webkit-autofill:hover, 
 .search-bar input:-webkit-autofill:focus, 
@@ -451,11 +452,13 @@ main {
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
     transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     visibility: visible;
+    /* Importante para o Canvas se comportar como fundo */
     overflow: hidden;
 }
 
+/* Estilo do Visualizador de Áudio (Agora Spectrum Pequeno) */
 #audio-visualizer {
-    width: 120px;
+    width: 120px; /* Aumentado um pouco para visibilidade */
     height: 40px;
     margin-left: 15px;
     opacity: 1;
@@ -463,6 +466,7 @@ main {
     z-index: 1;
 }
 
+/* Garante que os elementos do player fiquem acima do visualizer */
 .player-content-info, .player-controls, .player-volume-container {
     z-index: 5;
     position: relative;
@@ -1257,9 +1261,18 @@ input:checked + .slider:before {
     align-items: center;
 }
 
+/* Updated tooltip positioning wrapper */
 .time-header-wrapper {
     position: relative;
     display: inline-block;
+}
+
+/* Allow manual positioning of the clock icon */
+.time-header-wrapper i {
+    position: relative;
+    /* Adjust top/left to move the icon manually */
+    top: 0;
+    right: 75px;
 }
 
 .time-header-wrapper:hover .tooltip-text-clock {
@@ -1272,21 +1285,21 @@ input:checked + .slider:before {
     background-color: #333;
     color: #fff;
     text-align: center;
-    padding: 4px 8px;
+    padding: 5px 10px; /* Larger padding */
     border-radius: 4px;
     position: absolute;
-    bottom: 120%;
-    left: 50%;
+    right: 12px;
+    bottom: 30px; /* Fixed px value ensures it clears the icon */
     transform: translateX(-50%);
-    z-index: 10;
+    z-index: 100;
     font-size: 12px;
     white-space: nowrap;
     opacity: 0;
     transition: opacity 0.3s;
-    font-weight: normal;
+    font-weight: 500;
     box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     text-transform: none;
-    right: auto;
+    pointer-events: none; /* Prevents flickering */
 }
 
 .album-divider {
@@ -1498,27 +1511,33 @@ input:checked + .slider:before {
     height: 24px;
     border-radius: 50%;
     object-fit: cover;
-    margin-right: 5px;
+    margin-right: 8px; /* Adjusted spacing */
+    vertical-align: middle; /* Fix vertical alignment with text */
+    border: 1px solid transparent; /* Ensure consistent sizing */
 }
 
+/* === AI SEARCH STYLES === */
 .ai-suggestion-box {
     position: relative;
+    /* Um fundo profundo com um brilho radial sutil no canto superior esquerdo */
     background: 
         radial-gradient(circle at 0% 0%, rgba(29, 185, 84, 0.15) 0%, transparent 50%),
         radial-gradient(circle at 100% 100%, rgba(255, 255, 255, 0.05) 0%, #121212 100%);
     background-color: #0a0a0a;
     
+    /* Borda ultra fina e translúcida */
     border: 1px solid rgba(255, 255, 255, 0.08);
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    border-left: 3px solid #1db954;
+    border-top: 1px solid rgba(255, 255, 255, 0.12); /* Luz de topo */
+    border-left: 3px solid #1db954; /* Mantendo sua identidade original */
     
     border-radius: 16px;
     padding: 24px 28px;
     margin-bottom: 24px;
     
+    /* Sombra de alta qualidade (suave e espalhada) */
     box-shadow: 
         0 4px 24px -1px rgba(0, 0, 0, 0.2),
-        0 0 0 1px rgba(0, 0, 0, 0.4);
+        0 0 0 1px rgba(0, 0, 0, 0.4); /* Anel escuro para definição */
         
     overflow: hidden;
     transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -1543,6 +1562,7 @@ input:checked + .slider:before {
     letter-spacing: 1.5px;
     text-transform: uppercase;
     
+    /* O texto brilha */
     color: transparent;
     background: linear-gradient(90deg, #1db954, #ffffff);
     -webkit-background-clip: text;
